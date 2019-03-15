@@ -1,4 +1,4 @@
-package com.awarematics.postmedia.test;
+package com.awarematics.postmedia.movingobject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,6 +9,7 @@ import org.locationtech.jts.io.ParseException;
 
 import com.awarematics.postmedia.io.MWKTReader;
 import com.awarematics.postmedia.mgeom.MGeometryFactory;
+import com.awarematics.postmedia.types.mediamodel.MDouble;
 import com.awarematics.postmedia.types.mediamodel.MPolygon;
 
 public class MvoingRegions {
@@ -22,13 +23,14 @@ public class MvoingRegions {
 		 MPolygon mpolygon2 = (MPolygon) reader.read("MPOLYGON ((10 10, 20 20, 30 50, 10 10) 222, (10 10, 20 20, 21 71, 20 50, 10 10) 333)");
 		//MPolygon mpolygon2 = (MPolygon) reader.read("MPOLYGON ((0 0, 1 1, 1 0, 0 0) 1000)");
 		
-		ArrayList<MPolygon> a = Operation(mpolygon1,mpolygon2);		
-		ArrayList<MPolygon> b = Operation(mpolygon2,mpolygon1);
+		ArrayList<MPolygon> a = operation(mpolygon1,mpolygon2);		
+		ArrayList<MPolygon> b = operation(mpolygon2,mpolygon1);
 	    
-		
+		MDouble mb = result(a,b);
+		System.out.println(mb.toGeoString());
 
 	}
-	public static ArrayList<MPolygon> Operation(MPolygon mpolygon1, MPolygon mpolygon2)
+	public static ArrayList<MPolygon> operation(MPolygon mpolygon1, MPolygon mpolygon2)
 	{
 		Polygon[] pol1 = mpolygon1.getListPolygon();
 		Polygon[] pol2 = mpolygon2.getListPolygon();
@@ -108,37 +110,65 @@ public class MvoingRegions {
 						break;
 				}
 		}
-		System.out.println(temp_Sf);
-		System.out.println(Sf);
-		System.out.println(t);
-		System.out.println(temp_t);
+		
 		ArrayList<MPolygon> Df = new ArrayList<MPolygon>();
 
 		for (int i = 0; i < Sf.size(); i++) {
-			if (i == 0) {
-				Polygon[] pp = new Polygon[1];
-				long[] tt = new long[1];
-				pp[0] = Sf.get(i);
-				tt[0] = temp_t.get(i);
-				MPolygon mp = geometryFactory.createMPolygon(pp, tt);
-				Df.add(mp);
-			} else if (temp_t.get(i) > temp_t.get(i - 1)) {
-				Polygon[] pp = new Polygon[1];
-				long[] tt = new long[1];
-				pp[0] = Sf.get(i);
-				tt[0] = temp_t.get(i);
-				MPolygon mp = geometryFactory.createMPolygon(pp, tt);
-				Df.add(mp);
 
-			}
+				Polygon[] pp = new Polygon[1];
+				long[] tt = new long[1];
+				pp[0] = Sf.get(i);
+				tt[0] = temp_t.get(i);
+				MPolygon mp = geometryFactory.createMPolygon(pp, tt);
+				Df.add(mp);
 		}
 		System.out.println(Df.size());
-		System.out.println(Df.get(0).getTimes()[0]);
+		//System.out.println(Df.get(0).getTimes()[0]);
 		return Df;
 	}
 	//--------------------------------------------algorithm2
 	@SuppressWarnings("unchecked")
 	private static void extracted(ArrayList<Polygon> Sf) {
 		Collections.sort(Sf);
+	}
+	public static MDouble result(ArrayList<MPolygon> sf1, ArrayList<MPolygon> sf2)
+	{
+		ArrayList<MPolygon> St = new ArrayList<MPolygon>();
+		ArrayList<Long> sort_time = new ArrayList<Long>();
+		ArrayList<Double> sort_value = new ArrayList<Double>();
+		for(int i=0;i< sf1.size();i++)
+				St.add(sf1.get(i));
+		for(int i=0;i< sf2.size();i++)
+			St.add(sf2.get(i));   // union a and b
+		/*
+		 * lexicograzphically
+		 */
+		for(int i=0;i<St.size();i++)
+		{
+			long min = 9223372036854775807l;
+			double sum = 0;
+			for(int j=0;j<St.size();j++)
+			{
+				if(St.get(i).getTimes()[0]<min){
+					min = St.get(i).getTimes()[0];
+					sum = St.get(i).getListPolygon()[0].getArea();
+				}
+			}
+			sort_time.add(min);
+			sort_value.add(sum);
+			//System.out.println(St.get(i).toGeoString());
+		}
+		//Collections.sort(St.);
+		
+		System.out.println(St);
+		for(int i=0;i<St.size();i++)
+		{
+			System.out.println(St.get(i).toGeoString());
+		}
+		
+		double[] value = new double[2];
+		long[] times = new long[2];
+		MDouble mdouble = geometryFactory.createMDouble(value, times);
+		return mdouble;
 	}
 }
