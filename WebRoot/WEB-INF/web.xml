@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4" 
+     xmlns="http://java.sun.com/xml/ns/j2ee" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+    http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+<servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>GetAndPostExample</servlet-name>
+    <servlet-class>GetAndPostExample</servlet-class>
+</servlet>
+<servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>GetAndPostData</servlet-name>
+    <servlet-class>GetAndPostData</servlet-class>
+</servlet>
+<servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>GetAndPostLayer</servlet-name>
+    <servlet-class>GetAndPostLayer</servlet-class>
+</servlet>
+<servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>GetAndPostRange</servlet-name>
+    <servlet-class>GetAndPostRange</servlet-class>
+</servlet>
+<servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>GetAndPostProjection</servlet-name>
+    <servlet-class>GetAndPostProjection</servlet-class>
+</servlet>
+<servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>GetAndPostTime</servlet-name>
+    <servlet-class>GetAndPostTime</servlet-class>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>GetAndPostExample</servlet-name>
+    <url-pattern>/GetAndPostExample</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+    <servlet-name>GetAndPostData</servlet-name>
+    <url-pattern>/GetAndPostData</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+    <servlet-name>GetAndPostLayer</servlet-name>
+    <url-pattern>/GetAndPostLayer</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+    <servlet-name>GetAndPostRange</servlet-name>
+    <url-pattern>/GetAndPostRange</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+    <servlet-name>GetAndPostProjection</servlet-name>
+    <url-pattern>/GetAndPostProjection</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+    <servlet-name>GetAndPostTime</servlet-name>
+    <url-pattern>/GetAndPostTime</url-pattern>
+</servlet-mapping>
+
+<welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+</welcome-file-list>
+</web-app>
