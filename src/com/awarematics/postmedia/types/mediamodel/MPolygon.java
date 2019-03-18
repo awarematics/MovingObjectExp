@@ -110,10 +110,10 @@ public class MPolygon extends MGeometry {
 
 
 	@Override
-	public Geometry snapshot(long ts) {
-		PrecisionModel precisionModel = new PrecisionModel(1000);
-		GeometryFactory geometryFactorys = new GeometryFactory(precisionModel,0);
-		long current_time = ts;
+	public Geometry snapshot(long instant) {
+	//	PrecisionModel precisionModel = new PrecisionModel(1000);
+		GeometryFactory geometryFactorys = new GeometryFactory();
+		long current_time = instant;
 		for (int i = 0; i < numOf(); i++) {
 			long t = times[i];
 			if (t == current_time) {
@@ -133,7 +133,7 @@ public class MPolygon extends MGeometry {
 		int temp = 0; long start = 0; long end = 0;
 		for (int i = numOf()-1; i >=0; i--) {
 			long t = times[i];
-			if (t < current_time) {
+			if (t <= current_time) {
 				start = t;
 			}
 			if (t > current_time && temp != 1) {
@@ -143,6 +143,7 @@ public class MPolygon extends MGeometry {
 				if (i !=0 ) {
 					Coordinate[] coo = new Coordinate[listPolygon[i].getCoordinates().length];
 					for (int p = 0; p < coo.length; p++) {
+						System.out.println("p\t\t"+p);
 						d = d (listPolygon[i].getCoordinates()[p].x,listPolygon[i-1].getCoordinates()[p].x, listPolygon[i].getCoordinates()[p].y, listPolygon[i-1].getCoordinates()[p].y);
 						dis = (current_time - start) * d / (end - start);
 						double cy = (dis * (listPolygon[i].getCoordinates()[p].y- listPolygon[i-1].getCoordinates()[p].y)) / d + listPolygon[i-1].getCoordinates()[p].y;
@@ -150,6 +151,7 @@ public class MPolygon extends MGeometry {
 						coo[p] = new Coordinate();
 						coo[p].x = cx;
 						coo[p].y = cy;
+						System.out.println(coo[p].x);
 					}
 					Polygon[] polygons = new Polygon[1];
 					polygons[0] = geometryFactorys.createPolygon(coo);
