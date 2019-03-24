@@ -24,7 +24,7 @@ public class Distance {
 	public static void main(String[] args) throws IOException, ParseException, java.text.ParseException {
 
 		MPolygon mpolygon1 = (MPolygon) reader.read(
-				"MPOLYGON ((10 10, 20 20, 30 40, 40 50, 10 10) 1481480632223, (10 10, 20 20, 21 21, 30 40, 10 10) 1481480646556)");
+				"MPOLYGON ((10 10, 20 20, 30 40, 40 50, 10 10) 1481480632223, (10 10, 20 20, 21 21, 30 40, 10 10) 1481480645556)");
 		MPoint mp = (MPoint) reader.read(
 				"MPOINT ((0 0) 1481480632123, (2 5) 1481480637123, (34 333) 1481480638000, (0.23546789 0) 1481480639123, (3 3) 1481480641123, (333 333) 1481480642556, (0 0) 1481480643123, (2 7) 1481480644123, (333 33) 1481480645556)");
 
@@ -38,8 +38,7 @@ public class Distance {
 		MBool mb = NotInside(mp, mpolygon1);
 		//System.out.println(mb.numOf());
 		double[] mdistance = new double[mb.numOf()];
-		long overlappedStartTime = Math.max(mp.getTimes()[0], mpolygon1.getTimes()[0]);
-		long overlappedEndTime = Math.min(mp.getTimes()[mp.numOf() - 1], mpolygon1.getTimes()[mpolygon1.numOf() - 1]);
+		
 		for (int i = 0; i < mb.numOf(); i++){
 			if (mb.getBools()[i] == true) {
 				// the distance is 0
@@ -51,9 +50,8 @@ public class Distance {
 				Coordinate[] c = DistanceOp.nearestPoints(mpolygon1.getListPolygon()[i], mp.snapshot(mb.getTimes()[i]));
 				mdistance[i] = d(c[0], mp.snapshot(mb.getTimes()[i]).getCoordinates()[0]);
 			}
-			return geometryFactory.createMDouble(mdistance, mb.getTimes());
 		}
-		return null;
+		return geometryFactory.createMDouble(mdistance, mb.getTimes());
 	}
 
 	private static MBool NotInside(MPoint mp, MPolygon mpolygon1) {

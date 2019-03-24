@@ -7,50 +7,53 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Polygon;
 
 public class OutputJson {
 
 	private static JSONArray jsonArray;
-	//private static JSONArray jsonArray2;
+	private static JSONArray jsonArray2;
 
 	public static String getresult(double[] x, double[] y,String[] time, int file) {
+		System.out.println("visit"+x.length);
 		jsonArray = new JSONArray();
-		//jsonArray2 = new JSONArray();
+		jsonArray2 = new JSONArray();
 		JSONObject outData = new JSONObject();
-		outData.put("mpoint", jsonArray);
-		//outData.put("mvideo_uri", jsonArray2);
-		
-		double[] direction = new double[x.length]; 
+		outData.put("mlinestring", jsonArray);		
+		//double[] direction = new double[x.length]; 
 		// straight direction in front of dashcam
 		//direction = printDirection(x,y);
-		
 		// random direction 30% 30% 20% 20%
-		direction = printRandomDirection(x,y);
-		for (int i = 0; i < x.length; i++) {
+		//direction = printRandomDirection(x,y);
+		//Polygon[] pol = new Polygon[x.length]; 
+		LineString[] line = new LineString[x.length];
+		
+		for (int i = 1; i < x.length; i++) {
+			System.out.println("???");
 			JSONObject data = new JSONObject();
-			//data.put("vangle", 60);
-			//data.put("width", 1280);
-		//data.put("height", 720);
-			//data.put("distance", 0.001);
-			//data.put("direction", direction[i]);
 			data.put("time", time[i]);
-			data.put("x", x[i]);
-			data.put("y", y[i]);
-			// data.put("polygon",p[i].toText());
-			//JSONObject data2 = new JSONObject();
-			//String datastring = "file://D://mvideo/00a395fe-d60c0b47.mov?t=" + (i+1);//file://D://mvideo/000f8d37-d4c09a0f.mov?t=40
-			//data.put("uri", datastring);
-			jsonArray.put(data);
-			//jsonArray2.put(data2);
+			//data.put("x", x[i]);
+			//data.put("y", y[i]);
+			line[i] = createLine(x,y,i);
+			System.out.println("rrrr");
+			System.out.println(line[i]+"\t\tyy");
+			data.put("linestring", line[i]);
+			jsonArray.put(data);	
+			
 		}
-		//outData.put("id", file + ".json");
+		JSONObject data2 = new JSONObject();
+		data2.put("id", 00001);
+		jsonArray2.put(data2);
+		outData.put("id", jsonArray2);
 		return outData.toString();
-
 	}
 
 	public static void saveDataToFile(String fileName, String data) {
 		BufferedWriter writer = null;
-		File file = new File("d:\\mfs\\mpoint" + "1" + ".json");
+		File file = new File("d:\\mfs\\mlinestring"  +"1" + ".json");
 		if (!file.exists()) {
 			try {
 				file.createNewFile();
@@ -145,5 +148,68 @@ public class OutputJson {
 		}
 		return result;
 	}
-
+	private static Polygon createPolygon(double d, double e) {
+		Coordinate[] coo = new Coordinate[5];
+		coo[0] = new Coordinate();
+		coo[0].x = d - 0.000001;
+		coo[0].y = e - 0.000003;
+		
+		coo[1] = new Coordinate();
+		coo[1].x = d + 0.000001;
+		coo[1].y = e - 0.000003;
+		
+		coo[2] = new Coordinate();
+		coo[2].x = d + 0.000001;
+		coo[2].y = e + 0.000003;
+		
+		coo[3] = new Coordinate();
+		coo[3].x = d - 0.000001;
+		coo[3].y = e + 0.000003;
+		
+		coo[4] = new Coordinate();
+		coo[4].x = d - 0.000001;
+		coo[4].y = e - 0.000003;
+		
+		GeometryFactory g = new GeometryFactory();
+		Polygon p= g.createPolygon(coo);
+		return p;
+	}
+	public static String getresult(double[] x, String name, String[] time, int file) {
+		jsonArray = new JSONArray();
+		jsonArray2 = new JSONArray();
+		JSONObject outData = new JSONObject();
+		outData.put("mdouble", jsonArray);
+			
+		for (int i = 0; i < x.length; i++) {
+			JSONObject data = new JSONObject();			
+			data.put("time", time[i]);
+			data.put(name, x[i]);			
+			jsonArray.put(data);		
+		}		
+		
+		JSONObject data2 = new JSONObject();
+		data2.put("id", 00002);
+		jsonArray2.put(data2);
+		outData.put("id", jsonArray2);
+		
+		return outData.toString();
+	}
+	public static LineString createLine(double[] x, double[] y, int i) {
+		Coordinate[]  coo = new Coordinate[i+1];
+		System.out.println(i);
+		for(int j =0;j<i+1;j++)
+		{
+			coo[j] = new Coordinate();
+			coo[j].x = x[j];
+			coo[j].y = y[j];
+			System.out.println(coo[j].x);
+		}
+		if(i==0) return null;
+		else
+		{
+		GeometryFactory g = new GeometryFactory();
+		LineString line = g.createLineString(coo);
+		//System.out.println("lene"+line);
+		return line;}
+	}
 }

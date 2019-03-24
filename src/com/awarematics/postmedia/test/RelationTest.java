@@ -72,7 +72,7 @@ public class RelationTest {
 	
 		//MBool ms = MGeometry.disjoint(mp, mp3);
 		
-			System.out.println(MGeometry.relationship(mv, mp).toGeoString());
+		//	System.out.println(MGeometry.relationship(mv, mp).toGeoString());
 			
 			//System.out.println(mp3.btime().toGeoString());
 		//System.out.println(MGeometry.meet(mp, mp).toGeoString());
@@ -97,12 +97,12 @@ public class RelationTest {
 		MString mst = MGeometry.relationship(mv, mv2);
 		System.out.println(mst.toGeoString());
 */
-		System.out.println("---------------------------");
+		//System.out.println("---------------------------");
 //MBool mool2 = MGeometry.overlaps(mp, mp2);
 		//System.out.println(mool2.toGeoString());
 
-		System.out.println("---------------------------");
-		/*GeometryFactory geometryFactor = new GeometryFactory();
+		//System.out.println("---------------------------");
+		GeometryFactory geometryFactor = new GeometryFactory();
 		WKTReader readers = new WKTReader(geometryFactor);
 	        LineString geometry1 = (LineString) readers.read("LINESTRING(-1 0, 0 0, 0 0.5, 5 5)");
 	        LineString geometry2 = (LineString) readers.read("LINESTRING(-2 -2, 0 0, -1 0, -2 -5)"); 
@@ -111,9 +111,10 @@ public class RelationTest {
 	        Point p = (Point) readers.read("POINT (0 0)");
 	        Point p2 = (Point) readers.read("POINT (0.25 0.15)");
 	        Polygon geometry3 = (Polygon) readers.read("POLYGON ((0 0, 0 1, 1 1, 1 0, 0 0))"); Polygon geometry6 = (Polygon) readers.read("POLYGON ((0 0, 0 1, 1 1, 0 0))");
-	        Polygon geometry4 = (Polygon) readers.read("POLYGON ((0 0, 0 1, 2 3, 0 0))");
+	        Polygon geometry4 = (Polygon) readers.read("POLYGON ((0.25 0.25, 0.25 0.75, 0.75 0.75, 0.25 0.25))");
 	    
-	        //线和线存在
+	        System.out.println(geometry4.intersects(geometry3));
+	     /*   //线和线存在
 	        System.out.println(geometry1.overlaps(geometry2));//ture
 	       //多边形存在
 	        System.out.println(geometry3.overlaps(geometry4));//ture
