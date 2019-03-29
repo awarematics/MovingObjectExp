@@ -60,9 +60,44 @@ public class MovingDistance {
 		
 		double[] value = distances.stream().mapToDouble(i -> i).toArray();
 		long[] targets = times.stream().mapToLong(i -> i).toArray();
-	
+	/*
+	 * delete repeat time;
+	 */
+		ArrayList<Integer> ditto = new ArrayList<Integer>();
+		for (int i = 0; i < targets.length; i++) {
+			for (int j = i + 1; j < targets.length; j++) {
+				if (targets[i]==(targets[j])) {
+					if (value[i] < value[j]) {
+						ditto.add(i);						
+					} else {
+						ditto.add(j);						
+					}
+				}
+			}
+		}
+		/*
+		 * delete repeat time
+		 */
+		ArrayList<Double> St = new ArrayList<Double>();
+		ArrayList<Long> tt = new ArrayList<Long>();
+		int tem=0;
+		for(int i=0;i<targets.length;i++)
+		{
+			tem =0;
+			for(int j=0;j<ditto.size();j++)
+			{
+				if(ditto.get(j)==i) tem = 1;
+			}
+			if(tem == 0){
+				St.add(value[i]);
+				tt.add(targets[i]);
+			}
+		}
+		double[] value2 = St.stream().mapToDouble(i -> i).toArray();
+		long[] targets2 = tt.stream().mapToLong(i -> i).toArray();
+		
 		MGeometryFactory geometryFactory = new MGeometryFactory();
-		MDouble mdouble = geometryFactory.createMDouble(value, targets);
+		MDouble mdouble = geometryFactory.createMDouble(value2, targets2);
 		return mdouble;
 	}
 

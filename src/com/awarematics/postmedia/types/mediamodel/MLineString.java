@@ -22,7 +22,9 @@ public class MLineString extends MGeometry {
 		points = mp.points;
 		times = mp.times;
 	}
-
+	public MLineString() {
+		// TODO Auto-generated constructor stub
+	}
 	public MLineString(LineString[] points, long[] value) {
 		this.points = points;
 		this.times = value;

@@ -58,6 +58,7 @@ public class AtomicTimeGenerator implements TimeGenerator {
 		for (int i = 0; i < (int) k; i++) 
 		{
 			nowTime.add(temp);
+			//System.out.println(temp);
 			temp = temp + atomicUnit;
 		}
 		return nowTime;

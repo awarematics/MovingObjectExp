@@ -216,8 +216,10 @@ function onOpen(evt) {
         }
        function projShow(responseProj)
        {
+    	  // alert(responseProj);
     	   var rangeSplit = new Array();
     		rangeSplit = responseProj.split("#");
+    		//alert(rangeSplit);
     		for (i = 0; i < rangeSplit.length-1; i++) {
     			var obj = new Array();
     			obj = rangeSplit[i].split("@");

@@ -148,6 +148,7 @@ public class OutputJson {
 		}
 		return result;
 	}
+	@SuppressWarnings("unused")
 	private static Polygon createPolygon(double d, double e) {
 		Coordinate[] coo = new Coordinate[5];
 		coo[0] = new Coordinate();

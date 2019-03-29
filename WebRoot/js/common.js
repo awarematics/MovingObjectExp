@@ -29,9 +29,44 @@ function trajectory(layerdata) {
 	for (i = 0; i < fileList.length - 1; i++) {
 		var pl = [];
 		var obj = JSON.parse(fileList[i]);
-		for (j = 0; j < obj.mgeometry.length; j++) {
-			pl.push([ obj.mgeometry[j].y, obj.mgeometry[j].x ]);
+
+		if (fileList[i].indexOf("mpoint") != -1) {
+			for (j = 0; j < obj.mpoint.length; j++) {
+				pl.push([ obj.mpoint[j].y, obj.mpoint[j].x ]);
+			}
 		}
+		if (fileList[i].indexOf("mpolygon") != -1){
+			for (j = 0; j < obj.mpolygon.length; j++) {
+				alert(obj.mpolygon[j]);
+				var y;
+				var x;
+				pl.push([ obj.mpolygon[j].y, obj.mpolygon[j].x ]);
+			}
+		}
+			
+		if (fileList[i].indexOf("mdouble") != -1){
+			for (j = 0; j < obj.mdouble.length; j++) {
+				pl.push([ obj.mdouble[j].y, obj.mdouble[j].x ]);
+			}
+		}
+			
+		if (fileList[i].indexOf("mvideo") != -1){
+			for (j = 0; j < obj.mvideo.length; j++) {
+				pl.push([ obj.mvideo[j].y, obj.mvideo[j].x ]);
+			}
+		}
+			
+		if (fileList[i].indexOf("mphoto") != -1){
+			for (j = 0; j < obj.mphoto.length; j++) {
+				pl.push([ obj.mphoto[j].y, obj.mphoto[j].x ]);
+			}
+		}
+		else
+			{
+			for (j = 0; j < obj.mpolygon.length; j++) {
+				pl.push([ obj.mpolygon[j].y, obj.mpolygon[j].x ]);
+			}
+			}
 		pathBack(vectorLayer, pl);
 	}
 	map.on('contextmenu', function(evt) {

@@ -7,7 +7,6 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.geom.PrecisionModel;
 
 import com.awarematics.postmedia.mgeom.MGeometryFactory;
 
@@ -143,7 +142,7 @@ public class MPolygon extends MGeometry {
 				if (i !=0 ) {
 					Coordinate[] coo = new Coordinate[listPolygon[i].getCoordinates().length];
 					for (int p = 0; p < coo.length; p++) {
-						System.out.println("p\t\t"+p);
+					//	System.out.println("p\t\t"+p);
 						d = d (listPolygon[i].getCoordinates()[p].x,listPolygon[i-1].getCoordinates()[p].x, listPolygon[i].getCoordinates()[p].y, listPolygon[i-1].getCoordinates()[p].y);
 						dis = (current_time - start) * d / (end - start);
 						double cy = (dis * (listPolygon[i].getCoordinates()[p].y- listPolygon[i-1].getCoordinates()[p].y)) / d + listPolygon[i-1].getCoordinates()[p].y;
@@ -151,7 +150,7 @@ public class MPolygon extends MGeometry {
 						coo[p] = new Coordinate();
 						coo[p].x = cx;
 						coo[p].y = cy;
-						System.out.println(coo[p].x);
+						//System.out.println(coo[p].x);
 					}
 					Polygon[] polygons = new Polygon[1];
 					polygons[0] = geometryFactorys.createPolygon(coo);

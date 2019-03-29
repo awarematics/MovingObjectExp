@@ -1,11 +1,7 @@
 package com.awarematics.postmedia.movingobject;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,12 +9,8 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
-
 import com.awarematics.postmedia.io.MWKTReader;
 import com.awarematics.postmedia.mgeom.MGeometryFactory;
-import com.awarematics.postmedia.test.OutputJson;
-import com.awarematics.postmedia.types.mediamodel.MBool;
-import com.awarematics.postmedia.types.mediamodel.MDouble;
 import com.awarematics.postmedia.types.mediamodel.MPolygon;
 
 public class Intersects {
@@ -57,7 +49,7 @@ public class Intersects {
 
 		}
 
-		File file2 = new File("d://mfs/mpolygon2" + ".json");// 000f157f-dab3a407
+		File file2 = new File("d://mfs/mpolygon3" + ".json");// 000f157f-dab3a407
 																// //000f8d37-d4c09a0f
 		String content2 = FileUtils.readFileToString(file2, "UTF-8");
 		JSONObject jsonObject2 = new JSONObject(content2);
@@ -84,13 +76,21 @@ public class Intersects {
 
 		}
 
-		//System.out.println(mpolygon1.toGeoString());
+		long startTime=System.currentTimeMillis(); 		
 		MPolygon a = operation(mpolygon1, mpolygon2, "intersects");
-		// System.out.println(a.toGeoString());
 		MPolygon b = operation(mpolygon2, mpolygon1, "intersects");
-		// System.out.println(b.toGeoString());
-		 MBool mb = result(a, b);
-		 System.out.println(mb.toGeoString());
+		String result = result(a, b);
+		System.out.println(result);
+		long endTime=System.currentTimeMillis();  
+		System.out.println("running time:  "+(endTime-startTime)+"ms");  
+		
+		long startTime2=System.currentTimeMillis(); 		
+		
+		@SuppressWarnings("static-access")
+		String result2 = mpolygon1.intersects(mpolygon2, mpolygon1).toGeoString();
+		System.out.println(result2);
+		long endTime2=System.currentTimeMillis();  
+		System.out.println("running time:   "+(endTime2-startTime2)+"ms");  
 
 	}
 
@@ -120,7 +120,6 @@ public class Intersects {
 					case "union":
 						break;
 					case "intersects":
-						// System.out.println("lllll\t"+i+"\t"+j);
 						Sf.add((Polygon) pol1[i].intersection(pol2[j]));
 						t.add(t1[i]);
 						// algorithm 6.1.2
@@ -172,7 +171,6 @@ public class Intersects {
 		 * lexicograzphically
 		 */
 		ArrayList<Integer> ditto = new ArrayList<Integer>();
-		System.out.println("----------");
 		
 		for (int i = 0; i < t.size(); i++) {
 			for (int j = i + 1; j < t.size(); j++) {
@@ -229,10 +227,13 @@ public class Intersects {
 
 	// --------------------------------------------algorithm3
 
-	public static MBool result(MPolygon sf1, MPolygon sf2) {
+	public static String result(MPolygon sf1, MPolygon sf2) {
 		/*
 		 * union MPolygon 
 		 */
+		String result="()";
+		if(sf1.numOf()>0 && sf2.numOf()>0)
+		{
 		Polygon[] pl = new Polygon[sf1.numOf()+sf2.numOf()];
 		long[] tl = new long[sf1.numOf()+sf2.numOf()];
 		for(int i=0;i< sf1.numOf() ;i++)
@@ -249,7 +250,6 @@ public class Intersects {
 		 * lexicograzphically
 		 */
 		ArrayList<Integer> ditto = new ArrayList<Integer>();
-		System.out.println("----------");
 		
 		for (int i = 0; i < tl.length; i++) {
 			for (int j = i + 1; j < tl.length; j++) {
@@ -283,6 +283,7 @@ public class Intersects {
 		/*
 		 * get bottom t-coordinate [t0 - tn]
 		 */
+		
 		
 		long overlappedStartTime = Math.max(sf1.getTimes()[0], sf2.getTimes()[0]);
 		long overlappedEndTime = Math.min(sf1.getTimes()[sf1.numOf() - 1], sf2.getTimes()[sf2.numOf() - 1]);
@@ -334,8 +335,32 @@ public class Intersects {
 		/*
 		 * get result   second mbool model
 		 */
+		result = result.replaceAll("\\)", "");
 		for(int i=0;i<MS.size();i++)
-		System.out.println(MS.get(i));
-		return null;
+		{
+			if(i==0)
+			{
+			if(MS.get(i).getArea()>0)
+				result +=  "("+stime.get(i)+" "+etime.get(i)+" true false) " + "true";
+			else 
+				result +=  "("+stime.get(i)+" "+etime.get(i)+" true false) " + "false";
+			}
+			else if(i!=MS.size()-1)
+			{
+				if(MS.get(i).getArea()>0)
+					result +=  ", ("+stime.get(i)+" "+etime.get(i)+" true false) " + "true";
+				else 
+					result +=  ", ("+stime.get(i)+" "+etime.get(i)+" true false) " + "false";
+			}
+			else{
+				if(MS.get(i).getArea()>0)
+					result +=  ", ("+stime.get(i)+" "+etime.get(i)+" true true) " + "true";
+				else 
+					result +=  ", ("+stime.get(i)+" "+etime.get(i)+" true true) " + "false";
+			}
+		}
+			result += ")"; 
+		}
+		return result;
 	}
 }

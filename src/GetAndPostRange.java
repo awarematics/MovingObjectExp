@@ -9,12 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 
-import org.apache.commons.io.FileUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
@@ -22,15 +18,15 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.WKTReader;
 
-import com.awarematics.postmedia.io.MWKTReader;
 import com.awarematics.postmedia.mgeom.MGeometryFactory;
 import com.awarematics.postmedia.types.mediamodel.FoV;
-import com.awarematics.postmedia.types.mediamodel.MPhoto;
 
 @SuppressWarnings("serial")
 public class GetAndPostRange extends HttpServlet {
+	@SuppressWarnings("unused")
 	private MGeometryFactory mgeometryFactory;
 	private GeometryFactory geometryFactory;
+	private BufferedReader in;
 
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response, String method)
 			throws ServletException, IOException, ParseException {
@@ -66,21 +62,31 @@ public class GetAndPostRange extends HttpServlet {
 				System.out.println("root\t\t" + temp);
 				String result = "";
 				try {
-					BufferedReader in = new BufferedReader(new FileReader(temp));
+					in = new BufferedReader(new FileReader(temp));
 					String str;
 					while ((str = in.readLine()) != null) {
 						result += str;
 					}
 				} catch (IOException e) {
 				}
-				int num=0;
-				String type= result.split("\"type\"\\:")[1];
-				type = type.split("\"")[1];
-				System.out.println("type\t\t"+type);
-				
-				String data1 = result.split("\\[")[1];
+				int num = 0;
+				System.out.println(result);
+				String type = "";
+				if(result.contains("mpoint"))
+					type = "mpoint";
+				if(result.contains("mpolygon"))
+					type = "mpolygon";
+				if(result.contains("mdouble"))
+					type = "mdouble";
+				if(result.contains("mvideo"))
+					type = "mvideo";
+				if(result.contains("mphoto"))
+					type = "mphoto";
+				System.out.println("type\t\t" + type);
+
+				String data1 = result.split(type+"\":\\[")[1];
 				data1 = data1.split("\\]")[0];
-				
+				System.out.println(data1+"\t data1");
 				String[] data2 = data1.split("\\},");
 				fromtime="";
 				totime="";
@@ -144,6 +150,28 @@ public class GetAndPostRange extends HttpServlet {
 							if(num>1) {totime = creationTime[j];}
 						}
 					}
+				}
+				if (type.equals("mpolygon")) {
+					for (int j = 0; j < data2.length; j++) {
+						String[] data3 = data2[j].split("\\:");
+						
+						String tempread = data3[1].split("\",")[0];
+						tempread = tempread.replaceAll("\"", "");
+						//System.out.println(tempread);
+						try {
+							listPolygon[j] = (Polygon) reader.read(tempread);
+						} catch (org.locationtech.jts.io.ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} 						
+						creationTime[j] = (data3[2].split("\"")[1]);
+						if(listPolygon[j].intersects(polygon)||listPolygon[j].contains(polygon)||listPolygon[j].within(polygon)||listPolygon[j].overlaps(polygon)||listPolygon[j].covers(polygon)){
+							num=num+1;
+							if(num==1) {fromtime = creationTime[j]; totime= creationTime[j];}
+							if(num>1) {totime = creationTime[j];}
+						}
+					}
+					
 				}
 				if (type.equals("mpoint")) {
 					

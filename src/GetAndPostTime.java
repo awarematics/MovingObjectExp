@@ -10,16 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 
-import org.apache.commons.io.FileUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.WKTReader;
 
@@ -29,11 +24,9 @@ import com.awarematics.postmedia.algorithms.similarity.M_LCVS;
 import com.awarematics.postmedia.algorithms.similarity.M_LCVS_MBR;
 import com.awarematics.postmedia.algorithms.similarity.M_LCVS_MBT;
 import com.awarematics.postmedia.algorithms.similarity.M_TrajHaus;
-import com.awarematics.postmedia.io.MWKTReader;
 import com.awarematics.postmedia.mgeom.MGeometryFactory;
 import com.awarematics.postmedia.types.mediamodel.FoV;
 import com.awarematics.postmedia.types.mediamodel.MGeometry;
-import com.awarematics.postmedia.types.mediamodel.MPhoto;
 
 @SuppressWarnings("serial")
 public class GetAndPostTime extends HttpServlet {
@@ -45,14 +38,16 @@ public class GetAndPostTime extends HttpServlet {
 	M_LCVS_MBR lcvsmbr;
 	M_Hausdorff haus;
 	M_TrajHaus trajhaus;
+	private BufferedReader in;
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response, String method)
 			throws ServletException, IOException, ParseException {
 
 		response.setContentType("text/xml");
 		String temp = request.getParameter("order3");
-		System.out.println("order3\t\t" + temp);
+		//System.out.println("order3\t\t" + temp);
 		mgeometryFactory = new MGeometryFactory();
 		geometryFactory = new GeometryFactory();
+		WKTReader reader = new WKTReader(geometryFactory);
 		MGeometry mg = null;
 		ArrayList<MGeometry> mglist = new ArrayList<MGeometry>();
 		String outputString = "";
@@ -63,27 +58,37 @@ public class GetAndPostTime extends HttpServlet {
 			// System.out.println("length\t\t"+sss.length);//0-6 3 4 6
 			String function = sss[sss.length - 2];
 			String parameter = sss[sss.length - 1];
-			System.out.println("function name\t\t" + function);
+			//System.out.println("function name\t\t" + function);
 			for (int i = 3; i < sss.length - 3; i++) {
 				temp = "D://mfs/" + sss[i].replace("\"", "");
 				System.out.println("root\t\t" + temp);
 				String result = "";
 				try {
-					BufferedReader in = new BufferedReader(new FileReader(temp));
+					in = new BufferedReader(new FileReader(temp));
 					String str;
 					while ((str = in.readLine()) != null) {
 						result += str;
 					}
 				} catch (IOException e) {
 				}
-				int num = 0;
-				type = result.split("\"type\"\\:")[1];
-				type = type.split("\"")[1];
-				System.out.println("type\t\t" + type);
+				//int num = 0;
+				//System.out.println(result);
+				type = "";
+				if(result.contains("mpoint"))
+					type = "mpoint";
+				if(result.contains("mpolygon"))
+					type = "mpolygon";
+				if(result.contains("mdouble"))
+					type = "mdouble";
+				if(result.contains("mvideo"))
+					type = "mvideo";
+				if(result.contains("mphoto"))
+					type = "mphoto";
+				//System.out.println("type\t\t" + type);
 
-				String data1 = result.split("\\[")[1];
+				String data1 = result.split(type+"\":\\[")[1];
 				data1 = data1.split("\\]")[0];
-
+			//	System.out.println(data1+"\t data1");
 				String[] data2 = data1.split("\\},");
 
 				double[] viewAngle = new double[data2.length];
@@ -168,6 +173,24 @@ public class GetAndPostTime extends HttpServlet {
 						//Point point = geometryFactory.createPoint(coords[j]);
 					}
 					mg = mgeometryFactory.createMPoint(coords, creationTime);
+					mglist.add(mg);
+				}
+				if (type.equals("mpolygon")) {
+					for (int j = 0; j < data2.length; j++) {
+						String[] data3 = data2[j].split("\\:");
+						
+						String tempread = data3[1].split("\",")[0];
+						tempread = tempread.replaceAll("\"", "");
+						//System.out.println(tempread);
+						try {
+							listPolygon[j] = (Polygon) reader.read(tempread);
+						} catch (org.locationtech.jts.io.ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} 						
+						creationTime[j] = Long.parseLong(data3[2].split("\"")[1]);
+					}
+					mg = mgeometryFactory.createMPolygon(listPolygon, creationTime);
 					mglist.add(mg);
 				}
 				if(function.equals("M_Snapshot"))
@@ -302,11 +325,13 @@ public class GetAndPostTime extends HttpServlet {
 				}
 			}if(function.equals("M_Hausdorff"))
 			{
+				System.out.println("visit"+"\t"+mglist.size());
 				haus = new M_Hausdorff();
 				for(int i=0;i<mglist.size()-1;i++){
 					for(int j=i+1;j<mglist.size();j++){
 					double similar = haus.measure(mglist.get(i), mglist.get(j));
 					outputString = outputString+function+"@"+sss[i+3].replace("\"", "")+":"+sss[j+3].replace("\"", "")+"@"+type+"@"+similar+"#";
+					System.out.println(outputString);
 					}
 				}
 			}if(function.equals("M_Equal"))
@@ -315,7 +340,7 @@ public class GetAndPostTime extends HttpServlet {
 					for(int j=i+1;j<mglist.size();j++){
 						
 						if(MGeometry.equal( mglist.get(i),  mglist.get(j))==null){
-							String similar=MGeometry.equal( mglist.get(i),  mglist.get(j)).toGeoString();
+						//	String similar=MGeometry.equal( mglist.get(i),  mglist.get(j)).toGeoString();
 							outputString = outputString+function+"@"+ sss[i].replace("\"", "")+"@"+type+"@"+"No Common Time In This Time_Series!"+"#";
 						}
 						else{
@@ -329,7 +354,7 @@ public class GetAndPostTime extends HttpServlet {
 				for(int i=0;i<mglist.size()-1;i++){
 					for(int j=i+1;j<mglist.size();j++){
 						if(MGeometry.meet( mglist.get(i),  mglist.get(j))==null){
-							String similar=MGeometry.meet( mglist.get(i),  mglist.get(j)).toGeoString();
+							//String similar=MGeometry.meet( mglist.get(i),  mglist.get(j)).toGeoString();
 							outputString = outputString+function+"@"+ sss[i].replace("\"", "")+"@"+type+"@"+"No Common Time In This Time_Series!"+"#";
 						}
 						else{
@@ -344,7 +369,7 @@ public class GetAndPostTime extends HttpServlet {
 				for(int i=0;i<mglist.size()-1;i++){
 					for(int j=i+1;j<mglist.size();j++){
 						if(MGeometry.intersects( mglist.get(i),  mglist.get(j))==null){
-							String similar=MGeometry.intersects( mglist.get(i),  mglist.get(j)).toGeoString();
+							//String similar=MGeometry.intersects( mglist.get(i),  mglist.get(j)).toGeoString();
 							outputString = outputString+function+"@"+ sss[i].replace("\"", "")+"@"+type+"@"+"No Common Time In This Time_Series!"+"#";
 						}
 						else{
@@ -359,7 +384,7 @@ public class GetAndPostTime extends HttpServlet {
 				for(int i=0;i<mglist.size()-1;i++){
 					for(int j=i+1;j<mglist.size();j++){
 						if(MGeometry.inside( mglist.get(i),  mglist.get(j))==null){
-							String similar=MGeometry.inside( mglist.get(i),  mglist.get(j)).toGeoString();
+							//String similar=MGeometry.inside( mglist.get(i),  mglist.get(j)).toGeoString();
 							outputString = outputString+function+"@"+ sss[i].replace("\"", "")+"@"+type+"@"+"No Common Time In This Time_Series!"+"#";
 						}
 						else{
@@ -373,7 +398,7 @@ public class GetAndPostTime extends HttpServlet {
 				for(int i=0;i<mglist.size()-1;i++){
 					for(int j=i+1;j<mglist.size();j++){
 						if(MGeometry.contains( mglist.get(i),  mglist.get(j))==null){
-							String similar=MGeometry.contains( mglist.get(i),  mglist.get(j)).toGeoString();
+						//	String similar=MGeometry.contains( mglist.get(i),  mglist.get(j)).toGeoString();
 							outputString = outputString+function+"@"+ sss[i].replace("\"", "")+"@"+type+"@"+"No Common Time In This Time_Series!"+"#";
 						}
 						else{
@@ -387,7 +412,7 @@ public class GetAndPostTime extends HttpServlet {
 				for(int i=0;i<mglist.size()-1;i++){
 					for(int j=i+1;j<mglist.size();j++){
 						if(MGeometry.disjoint( mglist.get(i),  mglist.get(j))==null){
-							String similar=MGeometry.disjoint( mglist.get(i),  mglist.get(j)).toGeoString();
+							//String similar=MGeometry.disjoint( mglist.get(i),  mglist.get(j)).toGeoString();
 							outputString = outputString+function+"@"+ sss[i].replace("\"", "")+"@"+type+"@"+"No Common Time In This Time_Series!"+"#";
 						}
 						else{
@@ -401,7 +426,7 @@ public class GetAndPostTime extends HttpServlet {
 				for(int i=0;i<mglist.size()-1;i++){
 					for(int j=i+1;j<mglist.size();j++){
 						if(MGeometry.eventTime( mglist.get(i),  mglist.get(j))==null){
-							String similar=MGeometry.eventTime( mglist.get(i),  mglist.get(j)).toGeoString();
+							//String similar=MGeometry.eventTime( mglist.get(i),  mglist.get(j)).toGeoString();
 							outputString = outputString+function+"@"+ sss[i].replace("\"", "")+"@"+type+"@"+"No Common Time In This Time_Series!"+"#";
 						}
 						else{
@@ -415,7 +440,7 @@ public class GetAndPostTime extends HttpServlet {
 				for(int i=0;i<mglist.size()-1;i++){
 					for(int j=i+1;j<mglist.size();j++){
 						if(MGeometry.overlaps( mglist.get(i),  mglist.get(j))==null){
-							String similar=MGeometry.overlaps( mglist.get(i),  mglist.get(j)).toGeoString();
+							//String similar=MGeometry.overlaps( mglist.get(i),  mglist.get(j)).toGeoString();
 							outputString = outputString+function+"@"+ sss[i].replace("\"", "")+"@"+type+"@"+"No Common Time In This Time_Series!"+"#";
 						}
 						else{
@@ -426,6 +451,7 @@ public class GetAndPostTime extends HttpServlet {
 				}
 			}if(function.equals("M_Relationship"))
 			{
+				System.out.println("visit\t"+mglist.size());
 				for(int i=0;i<mglist.size()-1;i++){
 					for(int j=i+1;j<mglist.size();j++){
 						String similar=MGeometry.relationship( mglist.get(i),  mglist.get(j)).toGeoString();

@@ -133,6 +133,7 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 		for (int i = 0; i < mg2.numOf(); i++) {
 			timeList.add(mg2.getTimes()[i]);
 		}
+		
 		if(eventTime(mg1, mg2).getInstant()!=null){
 		long[] ms = eventTime(mg1, mg2).getInstant();
 		for (int i = 0; i < ms.length; i++) {
@@ -189,14 +190,15 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 			return mgeom.createMInstant(null);
 		}
 		else{
-		long[] timeArea = new long[] { overlappedStartTime, overlappedEndTime };
-		ArrayList<Long> timeList = getTimeList(mg1, mg2, timeArea);
+		long[] timeArea = new long[] { overlappedStartTime, overlappedEndTime };		
+		ArrayList<Long> timeList = getTimeList(mg1, mg2, timeArea);		
 		LinkedHashSet<Long> set = new LinkedHashSet<Long>(timeList.size());
 		set.addAll(timeList);
 		timeList.clear();
 		timeList.addAll(set);
 		long[] tempList = timeList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
 		Arrays.sort(tempList);
+		//System.out.println(tempList.length);
 		ArrayList<Long> result = new ArrayList<Long>();
 		Coordinate[] coor1 = new Coordinate[timeList.size()];
 		Coordinate[] coor2 = new Coordinate[timeList.size()];
@@ -275,8 +277,9 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 									+ tempList[ii - 1]);
 
 							if (calDistance(mg2.snapshot(newTime).getCoordinate(),
-									mg1.snapshot(newTime).getCoordinate()) < 0.001)
+									mg1.snapshot(newTime).getCoordinate()) < 0.001 && newTime!=0)
 								result.add(newTime);
+							
 						}
 					}
 				}

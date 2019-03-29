@@ -9,29 +9,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 
-import org.apache.commons.io.FileUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.WKTReader;
 
-import com.awarematics.postmedia.io.MWKTReader;
 import com.awarematics.postmedia.mgeom.MGeometryFactory;
 import com.awarematics.postmedia.types.mediamodel.FoV;
 import com.awarematics.postmedia.types.mediamodel.MGeometry;
-import com.awarematics.postmedia.types.mediamodel.MPhoto;
 
 @SuppressWarnings("serial")
 public class GetAndPostProjection extends HttpServlet {
 	private MGeometryFactory mgeometryFactory;
 	private GeometryFactory geometryFactory;
+	private BufferedReader in;
 
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response, String method)
 			throws ServletException, IOException, ParseException {
@@ -46,8 +40,6 @@ public class GetAndPostProjection extends HttpServlet {
 
 		WKTReader reader = new WKTReader(geometryFactory);
 
-		MWKTReader mreader = new MWKTReader(mgeometryFactory);
-
 		if (temp != null) {
 			String[] sss = temp.split(" ");
 			// System.out.println("length\t\t"+sss.length);//0-6 3 4 6
@@ -58,21 +50,31 @@ public class GetAndPostProjection extends HttpServlet {
 				System.out.println("root\t\t" + temp);
 				String result = "";
 				try {
-					BufferedReader in = new BufferedReader(new FileReader(temp));
+					in = new BufferedReader(new FileReader(temp));
 					String str;
 					while ((str = in.readLine()) != null) {
 						result += str;
 					}
 				} catch (IOException e) {
 				}
-				int num = 0;
-				String type = result.split("\"type\"\\:")[1];
-				type = type.split("\"")[1];
+				//int num = 0;
+				System.out.println(result);
+				String type = "";
+				if(result.contains("mpoint"))
+					type = "mpoint";
+				if(result.contains("mpolygon"))
+					type = "mpolygon";
+				if(result.contains("mdouble"))
+					type = "mdouble";
+				if(result.contains("mvideo"))
+					type = "mvideo";
+				if(result.contains("mphoto"))
+					type = "mphoto";
 				System.out.println("type\t\t" + type);
 
-				String data1 = result.split("\\[")[1];
+				String data1 = result.split(type+"\":\\[")[1];
 				data1 = data1.split("\\]")[0];
-
+				System.out.println(data1+"\t data1");
 				String[] data2 = data1.split("\\},");
 
 				double[] viewAngle = new double[data2.length];
@@ -143,6 +145,24 @@ public class GetAndPostProjection extends HttpServlet {
 						exifJson[j] = "exifJson.json";
 					}
 					mg = mgeometryFactory.createMVideo(uri, width, height, viewAngle, verticalAngle, distance, direction, direction3d, altitude, annotationJson, exifJson, coords, creationTime, listPolygon, fov);
+				}
+				if (type.equals("mpolygon")) {
+					for (int j = 0; j < data2.length; j++) {
+						String[] data3 = data2[j].split("\\:");
+						
+						String tempread = data3[1].split("\",")[0];
+						tempread = tempread.replaceAll("\"", "");
+						//System.out.println(tempread);
+						try {
+							listPolygon[j] = (Polygon) reader.read(tempread);
+						} catch (org.locationtech.jts.io.ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} 						
+						creationTime[j] = Long.parseLong(data3[2].split("\"")[1]);
+					}
+					mg = mgeometryFactory.createMPolygon(listPolygon, creationTime);
+					//System.out.println("aaaaaaaaaaaa\t\t"+mg.toGeoString());
 				}
 				if (type.equals("mpoint")) {
 					for (int j = 0; j < data2.length; j++) {
