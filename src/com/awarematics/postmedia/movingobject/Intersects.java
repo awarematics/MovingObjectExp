@@ -2,6 +2,8 @@ package com.awarematics.postmedia.movingobject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,10 +18,10 @@ import com.awarematics.postmedia.types.mediamodel.MPolygon;
 public class Intersects {
 	static MGeometryFactory geometryFactory = new MGeometryFactory();
 	static MWKTReader reader = new MWKTReader(geometryFactory);
-
+	static long[] addtime;
 	public static void main(String[] args) throws IOException, ParseException, java.text.ParseException {
 
-		File file = new File("d://mfs/mpolygon2" + ".json");// 000f157f-dab3a407
+		File file = new File("d://mfs/mpolygon1" + ".json");// 000f157f-dab3a407
 															// //000f8d37-d4c09a0f
 		String content = FileUtils.readFileToString(file, "UTF-8");
 		JSONObject jsonObject = new JSONObject(content);
@@ -77,8 +79,8 @@ public class Intersects {
 		}
 
 		long startTime=System.currentTimeMillis(); 		
-		MPolygon a = operation(mpolygon1, mpolygon2, "intersects");
-		MPolygon b = operation(mpolygon2, mpolygon1, "intersects");
+		MPolygon a = operation(mpolygon2, mpolygon2, "intersects");
+		MPolygon b = operation(mpolygon2, mpolygon2, "intersects");
 		String result = result(a, b);
 		System.out.println(result);
 		long endTime=System.currentTimeMillis();  
@@ -87,7 +89,7 @@ public class Intersects {
 		long startTime2=System.currentTimeMillis(); 		
 		
 		@SuppressWarnings("static-access")
-		String result2 = mpolygon1.intersects(mpolygon2, mpolygon1).toGeoString();
+		String result2 = mpolygon1.intersects(mpolygon2, mpolygon2).toGeoString();
 		System.out.println(result2);
 		long endTime2=System.currentTimeMillis();  
 		System.out.println("running time:   "+(endTime2-startTime2)+"ms");  
@@ -97,8 +99,33 @@ public class Intersects {
 	public static MPolygon operation(MPolygon mpolygon1, MPolygon mpolygon2, String expression) {
 		// -----------------------------------algorithm1
 		Polygon[] pol1 = mpolygon1.getListPolygon();
-		Polygon[] pol2 = mpolygon2.getListPolygon();
+		Polygon[]pol2 = mpolygon2.getListPolygon();
 		long[] t1 = mpolygon1.getTimes();
+		
+		long[] doubletime = new long[mpolygon1.numOf() +  mpolygon2.numOf()];
+		for( int i =0;i< mpolygon1.numOf();i++)
+			doubletime[i] = mpolygon1.getTimes()[i];
+		for( int i =0;i< mpolygon2.numOf();i++)
+			doubletime[i+mpolygon1.numOf()] = mpolygon2.getTimes()[i];
+		
+		ArrayList<Long> doubletimes = new ArrayList<Long>();
+		int tnum;
+		for(int i =0;i<doubletime.length;i++){
+			tnum =0;
+			for(int j =i+1; j<doubletime.length;j++)
+			{
+				if(doubletime[j] == doubletime[i]){
+					tnum =1;
+				}
+			}
+			if(tnum !=1){
+				doubletimes.add(doubletime[i]);
+			}
+		}
+		
+		addtime = doubletimes.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
+		Arrays.sort(addtime);
+		
 		ArrayList<Polygon> Lf = new ArrayList<Polygon>();
 
 		for (int i = 0; i < pol1.length; i++)
@@ -231,7 +258,7 @@ public class Intersects {
 		/*
 		 * union MPolygon 
 		 */
-		String result="()";
+		String result="MBOOL ()";
 		if(sf1.numOf()>0 && sf2.numOf()>0)
 		{
 		Polygon[] pl = new Polygon[sf1.numOf()+sf2.numOf()];
@@ -336,6 +363,12 @@ public class Intersects {
 		 * get result   second mbool model
 		 */
 		result = result.replaceAll("\\)", "");
+		for(int i =0;i<addtime.length-1;i++){
+			if(addtime[i]<overlappedStartTime){
+				result +=  "("+addtime[i]+" "+addtime[i+1]+" true false) " + "false, ";
+			}
+		}
+		
 		for(int i=0;i<MS.size();i++)
 		{
 			if(i==0)
@@ -359,7 +392,23 @@ public class Intersects {
 					result +=  ", ("+stime.get(i)+" "+etime.get(i)+" true true) " + "false";
 			}
 		}
+		for(int i =0;i<addtime.length-1;i++){
+			if(addtime[i]>overlappedEndTime){
+				result +=  ", ("+stime.get(i)+" "+etime.get(i)+" true true) " + "false";
+			}
+		}
 			result += ")"; 
+		}
+		else
+		{
+			result ="MBOOL (";
+			for(int i=0;i<addtime.length-1;i++)
+				if(i!= addtime.length-2){
+					result +=  "("+addtime[i]+" "+addtime[i+1]+" true false) " + "false, ";
+				 }
+				else
+					result +=  "("+addtime[i]+" "+addtime[i+1]+" true true) " + "false";
+			result += ")";
 		}
 		return result;
 	}

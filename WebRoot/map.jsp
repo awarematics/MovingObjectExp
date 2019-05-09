@@ -56,10 +56,10 @@ tr, th {
 					<ul class="second">
 						<li>Add Map</li>
 						<li><a href="#"
-							onclick="javascript:window.open('adddata.jsp','newwindow','toolbar=no,scrollbars=yes,resizable=no,top=50,left=500, width=400,height=700');">Add
+							onclick="javascript:window.open('adddata.jsp','newwindow');">Add
 								Data</a></li>
 						<li><a href="#"
-							onclick="javascript:window.open('addlayer.jsp','newwindow','toolbar=no,scrollbars=yes,resizable=no,top=50,left=500, width=400,height=700');">Add
+							onclick="javascript:window.open('addlayer.jsp','newwindow');">Add
 								Layer</a></li>
 						<form method="post">
 							<textarea style="display:none" id="order" cols="55" rows="5"
@@ -70,12 +70,12 @@ tr, th {
 				<li>Moving Feature
 
 					<ul class="second">
-						<li><a href="#" onclick="javascript:window.open('projection.jsp','newwindow','toolbar=no,scrollbars=yes,resizable=no,top=50,left=500, width=1000,height=1200');">
+						<li><a href="#" onclick="javascript:window.open('projection.jsp','newwindow');">
 								Projection</a></li>
-						<li><a href="#" onclick="javascript:window.open('time_series.jsp','newwindow','toolbar=no,scrollbars=yes,resizable=no,top=50,left=500, width=1000,height=1200');">
+						<li><a href="#" onclick="javascript:window.open('time_series.jsp','newwindow');">
 								Temporal/Time-Series</a>
 						</li>
-						<li><a href="#" onclick="javascript:window.open('similarity.jsp','newwindow','toolbar=no,scrollbars=yes,resizable=no,top=50,left=500, width=1000,height=1200');">
+						<li><a href="#" onclick="javascript:window.open('similarity.jsp','newwindow');">
 								Moving Media Similarity</a>
 						</li>
 					</ul>
@@ -83,11 +83,22 @@ tr, th {
 				<li>Analysis Tools
 
 					<ul class="second">
-						<li><a href="#" onclick="javascript:window.open('OGC.jsp','newwindow','toolbar=no,scrollbars=yes,resizable=no,top=50,left=500, width=1000,height=1200');">
+						<li><a href="#" onclick="javascript:window.open('OGC.jsp','newwindow');">
 								OGC Analysis</a>
 						</li>
-						<li><a href="#" onclick="javascript:window.open('relationship.jsp','newwindow','toolbar=no,scrollbars=yes,resizable=no,top=50,left=500, width=1000,height=1200');">
+						<li><a href="#" onclick="javascript:window.open('relationship.jsp');">
 								Spatial-Temporal Predict</a>
+						</li>
+					</ul>
+				</li>
+				<li style="width:300px;">Compare With Secondo Model
+
+					<ul class="second">
+						<li><a href="#" onclick="javascript:window.open('m_intersects.jsp','newwindow');">
+								M_Intersects</a>
+						</li>
+						<li><a href="#" onclick="javascript:window.open('m_distance.jsp','newwindow');">
+								M_Distance</a>
 						</li>
 					</ul>
 				</li>

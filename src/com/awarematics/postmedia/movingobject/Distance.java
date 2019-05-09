@@ -70,6 +70,7 @@ public class Distance {
 		} catch (Exception e) {
 
 		}
+		System.out.println(mpolygon.toGeoString());
 
 		File file2 = new File("d://mfs/mpoint3" + ".json");// 000f157f-dab3a407
 		// //000f8d37-d4c09a0f
@@ -102,7 +103,7 @@ public class Distance {
 
 		}
 		
-		File file3 = new File("d://mfs/mpoint2" + ".json");// 000f157f-dab3a407
+		File file3 = new File("d://mfs/mpoint1" + ".json");// 000f157f-dab3a407
 		// //000f8d37-d4c09a0f
 		String content3 = FileUtils.readFileToString(file3, "UTF-8");
 		JSONObject jsonObject3 = new JSONObject(content3);
@@ -164,49 +165,52 @@ public class Distance {
 		/*
 		 * mpoint to mpolygon
 		 */
-		//long startTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 		MDouble mb = distance(mp, mpolygon);
 		System.out.println(mb.toGeoString());
-		//long endTime = System.currentTimeMillis();
-		//System.out.println("running time:  " + (endTime - startTime) + "ms");
+		long endTime = System.currentTimeMillis();
+		System.out.println("running time:  " + (endTime - startTime) + "ms");
 		
 		/*
 		 * mpoint to mpoint
 		 */
-		MDouble mb22 = distance(mp, mp2);
-		System.out.println(mb22.toGeoString());	
+		//MDouble mb22 = distance(mp, mp2);
+		//if(mb22 ==null) System.out.println("VVVVVVV");
+		//else
+		//System.out.println(mb22.toGeoString());	
 		/*
 		 * mpoint to mlinestring
 		 */
 		
-		MDouble mb33 = distance(mp, mline);
-		System.out.println(mb33.toGeoString());
+	//	MDouble mb33 = distance(mp, mline);
+	//	System.out.println(mb33.toGeoString());
 		/*
 		 * mpoint to point
 		 */
 		//40.76102639552276,"y":-73.98719290278292
-		Coordinate c = new Coordinate();
-		c.x= 40.76102639552276;
-		c.y = -73.98719290278292;
-		Point vp = new Point(c, null, 0);
-		System.out.println(distance(mp, vp).toGeoString());
+		//Coordinate c = new Coordinate();
+		//c.x= 40.76102639552276;
+		//c.y = -73.98719290278292;
+		//Point vp = new Point(c, null, 0);
+		//System.out.println(distance(mp, vp).toGeoString());
 		/*
 		 * mpoint t0 polygon  POLYGON ((40.75988315166806 -73.98802529210175, 40.75988515166806 -73.98802529210175, 40.75988515166806 -73.98801929210174, 40.75988315166806 -73.98801929210174, 40.75988315166806 -73.98802529210175))
 		 */
-		Polygon p = (Polygon) readers.read("POLYGON ((40.75988315166806 -73.98802529210175, 40.75988515166806 -73.98802529210175, 40.75988515166806 -73.98801929210174, 40.75988315166806 -73.98801929210174, 40.75988315166806 -73.98802529210175))");
+		//Polygon p = (Polygon) readers.read("POLYGON ((40.75988315166806 -73.98802529210175, 40.75988515166806 -73.98802529210175, 40.75988515166806 -73.98801929210174, 40.75988315166806 -73.98801929210174, 40.75988315166806 -73.98802529210175))");
 		//System.out.println(p.toText());
-		System.out.println(distance(mp, p).toGeoString());
+		//System.out.println(distance(mp, p).toGeoString());
 		/*
 		 * mpoint to LineString LINESTRING (40.75988415166806 -73.98802229210175, 40.75988423548709 -73.98802019662595, 40.75988423548709 -73.98802019662595, 40.759891904928494 -73.9880197775308)
 		 */
-		LineString linestring = (LineString) readers.read("LINESTRING (40.75988415166806 -73.98802229210175, 40.75988423548709 -73.98802019662595, 40.75988423548709 -73.98802019662595, 40.759891904928494 -73.9880197775308)");
-		System.out.println(distance(mp, linestring).toGeoString());
+		//LineString linestring = (LineString) readers.read("LINESTRING (40.75988415166806 -73.98802229210175, 40.75988423548709 -73.98802019662595, 40.75988423548709 -73.98802019662595, 40.759891904928494 -73.9880197775308)");
+		//System.out.println(distance(mp, linestring).toGeoString());
 		
 		long startTime2 = System.currentTimeMillis();
-		//MDouble mb2 = MovingDistance.distance(mp, mpolygon);
-		//System.out.println(mb2.toGeoString());
+		MDouble mb2 = MovingDistance.distance(mp, mpolygon);
+		if(mb2==null) System.out.println("fff");else
+		System.out.println(mb2.toGeoString());
 		long endTime2 = System.currentTimeMillis();
-		//System.out.println("running time:   " + (endTime2 - startTime2) + "ms");
+		System.out.println("running time:   " + (endTime2 - startTime2) + "ms");
 
 	}
 
@@ -232,10 +236,13 @@ public class Distance {
 		return geometryFactory.createMDouble(mdistance, mp.getTimes());
 	}
 
-	private static MDouble distance(MGeometry mp, MGeometry mpolygon1) {
+	public static MDouble distance(MGeometry mp, MGeometry mpolygon1) {
 
+		
 		MBool mb = NotInside(mp, mpolygon1);
 		// System.out.println(mb.numOf());
+		if(mb !=null)
+		{
 		double[] mdistance = new double[mb.numOf()];
 
 		for (int i = 0; i < mb.numOf(); i++) {
@@ -264,18 +271,42 @@ public class Distance {
 			}
 		}
 		return geometryFactory.createMDouble(mdistance, mb.getTimes());
+		}
+		else return null;
 	}
 
-	private static MBool NotInside(MGeometry mp, MGeometry mpolygon) {
-		return at(mp, mpolygon);
+	private static MBool NotInside(MGeometry mg1, MGeometry mg2) {
+		return at(mg1, mg2);
 	}
 
 	private static MBool at(MGeometry mg1, MGeometry mg2) {
 		long overlappedStartTime = Math.max(mg1.getTimes()[0], mg2.getTimes()[0]);
 		long overlappedEndTime = Math.min(mg1.getTimes()[mg1.numOf() - 1], mg2.getTimes()[mg2.numOf() - 1]);
-		boolean[] tempBool = null;
+		boolean[] tempBool = null ;
 		long[] tempList = null;
-
+		long[] doubletime = new long[mg1.numOf() +  mg2.numOf()];
+		for( int i =0;i< mg1.numOf();i++)
+			doubletime[i] = mg1.getTimes()[i];
+		for( int i =0;i< mg2.numOf();i++)
+			doubletime[i+mg2.numOf()] = mg2.getTimes()[i];
+		
+		ArrayList<Long> doubletimes = new ArrayList<Long>();
+		int tnum;
+		for(int i =0;i<doubletime.length;i++){
+			tnum =0;
+			for(int j =i+1; j<doubletime.length;j++)
+			{
+				if(doubletime[j] == doubletime[i]){
+					tnum =1;
+				}
+			}
+			if(tnum !=1){
+				doubletimes.add(doubletime[i]);
+			}
+		}
+		
+		long[] addtime = doubletimes.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
+		System.out.println(addtime.length);
 		ArrayList<Boolean> bool = new ArrayList<Boolean>();
 		ArrayList<Long> time = new ArrayList<Long>();
 		if (overlappedStartTime <= overlappedEndTime) {
@@ -305,11 +336,14 @@ public class Distance {
 			for (int i = 0; i < bool.size(); i++) {
 				tempBool[i] = bool.get(i);
 			}
+			System.out.println(addtime.length); 
 			MBool mb = geometryFactory.createMBool(tempBool, tempList);
 			return mb;
 		}
-		MBool mb = geometryFactory.createMBool(tempBool, tempList);
-		return mb;
+	
+		//MBool mb = geometryFactory.createMBool(tempBool, addtime);
+		//System.out.println("mb"+mb.toGeoString());
+		return null;
 	}
 
 	public static double d(Coordinate p1, Coordinate p2) {

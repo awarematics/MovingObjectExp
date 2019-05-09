@@ -46,6 +46,9 @@ public class MovingDistance {
 		ArrayList<Double> distances = new ArrayList<Double>();
 		ArrayList<Long> times = new ArrayList<Long>();
 		Double temp = 0.0;
+		long overlappedStartTime = Math.max(mg1.getTimes()[0], mg2.getTimes()[0]);
+		long overlappedEndTime = Math.min(mg1.getTimes()[mg1.numOf() - 1], mg2.getTimes()[mg2.numOf() - 1]);
+		if(overlappedStartTime>overlappedEndTime) return null;
 		for (long time : timeFunc.genTimes(mg1, mg2)) {
 			if (mg1.snapshot(time) == null || mg2.snapshot(time) == null) {
 			} else if (mg1.snapshot(time).within(mg2.snapshot(time))) {

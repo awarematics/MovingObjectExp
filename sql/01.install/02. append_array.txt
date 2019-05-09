@@ -1,0 +1,31 @@
+
+CREATE OR REPLACE FUNCTION append(mpoint, point[], timestamp without time zone[]) RETURNS mpoint AS
+$$
+DECLARE
+	c_trajectory	alias for $1;
+	array_tpoint	alias for $2;
+	array_time		alias for $3;
+
+	f_trajectory_segtable_name	text;
+	f_table_name			text;
+	array_size	integer;
+
+	i		integer;
+	sql		text;
+BEGIN
+	execute 'select array_upper( $1, 1 )'
+	into array_size using array_tpoint;
+
+	i := 1;
+
+	WHILE( i <= array_size ) LOOP
+		execute 'select append( $1, $2[$4], $3[$4] )'
+		using c_trajectory, array_tpoint,array_time ,i;
+		 i := i+1;
+	END LOOP;
+
+	RETURN c_trajectory;
+END
+$$
+LANGUAGE 'plpgsql' VOLATILE STRICT
+COST 100;

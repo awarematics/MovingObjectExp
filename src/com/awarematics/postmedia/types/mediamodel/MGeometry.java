@@ -9,6 +9,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import com.awarematics.postmedia.mgeom.MGeometryFactory;
 
@@ -164,6 +165,42 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 		return mgeom.createMBool(bools, tempList);
 	}
 
+	
+	public static MBool intersects(MGeometry mg1, Geometry mg2) {
+		ArrayList<Long> timeList = new ArrayList<Long>();
+		ArrayList<Long> timeEventList = new ArrayList<Long>();
+		MGeometryFactory mgeom = new MGeometryFactory();
+		for (int i = 0; i < mg1.numOf(); i++) {
+			timeList.add(mg1.getTimes()[i]);
+		}		
+		long[] tempList = timeList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
+		
+		boolean[] bools = new boolean[timeList.size()];
+
+		for (int i = 0; i < tempList.length; i++) {
+			if (mg1 instanceof MPoint){
+				Point p = new Point(mg1.getCoords()[i], null, 0);
+				if(p.intersects(mg2))
+					bools[i] = true;
+				else
+					bools[i] = false;
+			}
+			if (mg1 instanceof MPolygon){
+				if(mg1.getListPolygon()[i].intersects(mg2))
+					bools[i] = true;
+				else
+					bools[i] = false;
+			}
+			if (mg1 instanceof MLineString){
+				if(((MLineString) mg1).getPoints()[i].intersects(mg2))
+					bools[i] = true;
+				else
+					bools[i] = false;
+			}
+		}
+		return mgeom.createMBool(bools, tempList);
+	}
+	
 	public static MBool disjoint(MGeometry mg1, MGeometry mg2) {
 
 		MGeometryFactory mgeom = new MGeometryFactory();

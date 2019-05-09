@@ -1,0 +1,69 @@
+
+CREATE OR REPLACE FUNCTION append(mpoint, character varying) RETURNS mpoint AS
+$$
+DECLARE
+	c_trajectory	alias for $1;
+	array_mpoint	alias for $2;
+
+	f_trajectory_segtable_name	text;
+	f_table_name			text;
+	array_size	integer;
+	array_time	timestamp without time zone[];
+	array_point	point[];
+
+	i		integer;
+	sql		text;
+BEGIN
+	array_time = regexp_split_to_array(maketime(array_mpoint),',') ::timestamp without time zone[];
+	array_point = regexp_split_to_array(makepoint(array_mpoint),';') ::point[];
+	
+	execute 'select array_upper( $1, 1 )'
+	into array_size using array_point;
+
+	i := 1;
+	WHILE( i <= array_size ) LOOP
+		execute 'select append( $1, $2[$4], $3[$4] )'
+		using c_trajectory, array_point,array_time ,i;
+		 i := i+1;
+	END LOOP;
+
+	RETURN c_trajectory;
+END
+$$
+LANGUAGE 'plpgsql' VOLATILE STRICT
+COST 100;
+
+
+CREATE OR REPLACE FUNCTION append(mdouble, character varying) RETURNS mdouble AS
+$$
+DECLARE
+	c_trajectory	alias for $1;
+	array_mpoint	alias for $2;
+
+	f_trajectory_segtable_name	text;
+	f_table_name			text;
+	array_size	integer;
+	array_time	timestamp without time zone[];
+	array_double	double precision[];
+
+	i		integer;
+	sql		text;
+BEGIN
+	array_double = regexp_split_to_array(mdouble_double(array_mpoint),';') ::double precision[];
+	array_time = regexp_split_to_array(mdouble_time(array_mpoint),',') ::timestamp without time zone[];
+	
+	execute 'select array_upper( $1, 1 )'
+	into array_size using array_double;
+
+	i := 1;
+	WHILE( i <= array_size ) LOOP
+		execute 'select append( $1, $2[$4], $3[$4] )'
+		using c_trajectory, array_double,array_time ,i;
+		 i := i+1;
+	END LOOP;
+
+	RETURN c_trajectory;
+END
+$$
+LANGUAGE 'plpgsql' VOLATILE STRICT
+COST 100;

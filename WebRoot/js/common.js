@@ -36,11 +36,12 @@ function trajectory(layerdata) {
 			}
 		}
 		if (fileList[i].indexOf("mpolygon") != -1){
+		
 			for (j = 0; j < obj.mpolygon.length; j++) {
-				alert(obj.mpolygon[j]);
+			//	alert(obj.mpolygon[j].polygon);
 				var y;
 				var x;
-				pl.push([ obj.mpolygon[j].y, obj.mpolygon[j].x ]);
+				//pl.push([ obj.mpolygon[j].polygon[0].y, obj.mpolygon[j].polygon[0].x ]);
 			}
 		}
 			
@@ -61,12 +62,7 @@ function trajectory(layerdata) {
 				pl.push([ obj.mphoto[j].y, obj.mphoto[j].x ]);
 			}
 		}
-		else
-			{
-			for (j = 0; j < obj.mpolygon.length; j++) {
-				pl.push([ obj.mpolygon[j].y, obj.mpolygon[j].x ]);
-			}
-			}
+		
 		pathBack(vectorLayer, pl);
 	}
 	map.on('contextmenu', function(evt) {

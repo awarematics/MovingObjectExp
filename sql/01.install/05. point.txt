@@ -1,0 +1,20 @@
+
+CREATE OR REPLACE FUNCTION point(
+    double precision,
+    double precision)
+  RETURNS point AS
+$BODY$
+DECLARE
+    pointx        alias for $1;
+    pointy        alias for $2;
+    tp            public.point;
+BEGIN    
+    tp.pointx := pointx;
+    tp.pointy := pointy;
+    RETURN tp;
+END
+$BODY$
+  LANGUAGE plpgsql VOLATILE STRICT
+  COST 100;
+ALTER FUNCTION point(double precision, double precision)
+  OWNER TO postgres;

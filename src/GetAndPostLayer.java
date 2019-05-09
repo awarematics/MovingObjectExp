@@ -31,7 +31,7 @@ public class GetAndPostLayer extends HttpServlet {
 		mgeometryFactory = new MGeometryFactory();
 		geometryFactory = new GeometryFactory();
 
-		WKTReader reader = new WKTReader(geometryFactory);
+	//	WKTReader reader = new WKTReader(geometryFactory);
 		String temp = GetAndPostData.responseLayer;
 		String result = "";
 		if (temp != null) {
@@ -94,7 +94,7 @@ public class GetAndPostLayer extends HttpServlet {
 				}*/
 			//	result2 = result2.replaceAll("\\\\", "");
 
-				System.out.println(result);
+				System.out.println(result2);
 				result += result2 + "@";
 			}
 		}

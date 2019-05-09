@@ -1,0 +1,27 @@
+
+CREATE TABLE mpoint_columns
+(
+	f_table_catalog character varying(256) NOT NULL,
+	f_table_schema character varying(256) NOT NULL,
+	f_table_name character varying(256) NOT NULL,
+	f_mpoint_column character varying(256) NOT NULL,
+	f_mpoint_segtable_name character varying(256) NOT NULL,
+	mpoint_compress character varying(256),
+	coord_dimension integer,
+	srid integer,
+	"type" character varying(30),
+	f_segtableoid character varying(256) NOT NULL,
+	f_sequence_name character varying(256) NOT NULL,
+	tpseg_size	integer
+)
+WITH (
+  OIDS=TRUE
+);
+
+
+CREATE TABLE taxi 
+(
+   carnumber  text,
+   owner text
+);
+

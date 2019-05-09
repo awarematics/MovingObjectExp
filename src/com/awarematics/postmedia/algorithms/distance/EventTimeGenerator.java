@@ -225,8 +225,7 @@ public class EventTimeGenerator implements TimeGenerator {
 	}
 
 	private long[] eventTime(Geometry geometry1, Geometry geometry2, MPoint mg1, ArrayList<Long> timeList) {
-		if (geometry1.intersects(geometry2)) {
-			try {
+		try {if (geometry1.intersects(geometry2)!=false) {
 				Geometry interPoint = geometry2.intersection(geometry1);
 				Coordinate[] pp = interPoint.getCoordinates();
 
@@ -250,13 +249,13 @@ public class EventTimeGenerator implements TimeGenerator {
 				long[] tempList = timeList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
 				Arrays.sort(tempList);
 				return tempList;
-			} catch (Exception e) {
-
-			}
+			 
 		} else {
 			long[] tempList = timeList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
 			Arrays.sort(tempList);
 			return tempList;
+		}}catch (Exception e) {
+
 		}
 		return null;
 	}
