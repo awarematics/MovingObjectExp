@@ -22,16 +22,16 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.WKTReader;
 
 import com.awarematics.postmedia.algorithms.distance.MovingDistance;
-import com.awarematics.postmedia.algorithms.similarity.M_Hausdorff;
-import com.awarematics.postmedia.algorithms.similarity.M_LCSS;
-import com.awarematics.postmedia.algorithms.similarity.M_LCVS;
-import com.awarematics.postmedia.algorithms.similarity.M_LCVS_MBR;
-import com.awarematics.postmedia.algorithms.similarity.M_LCVS_MBT;
-import com.awarematics.postmedia.algorithms.similarity.M_TrajHaus;
+import com.awarematics.postmedia.algorithms.similarity.MHausdorff;
+import com.awarematics.postmedia.algorithms.similarity.MLCSS;
+import com.awarematics.postmedia.algorithms.similarity.MLCVS;
+import com.awarematics.postmedia.algorithms.similarity.MLCVSwithMBR;
+import com.awarematics.postmedia.algorithms.similarity.MLCVSwithMBT;
+import com.awarematics.postmedia.algorithms.similarity.MTrajHaus;
+import com.awarematics.postmedia.compareSECONDO.Distance;
+import com.awarematics.postmedia.compareSECONDO.Intersects;
 import com.awarematics.postmedia.io.MWKTReader;
 import com.awarematics.postmedia.mgeom.MGeometryFactory;
-import com.awarematics.postmedia.movingobject.Distance;
-import com.awarematics.postmedia.movingobject.Intersects;
 import com.awarematics.postmedia.types.mediamodel.FoV;
 import com.awarematics.postmedia.types.mediamodel.MGeometry;
 import com.awarematics.postmedia.types.mediamodel.MPolygon;
@@ -40,12 +40,12 @@ import com.awarematics.postmedia.types.mediamodel.MPolygon;
 public class GetAndPostTime extends HttpServlet {
 	private MGeometryFactory mgeometryFactory;
 	private GeometryFactory geometryFactory;
-	M_LCSS lcss;
-	M_LCVS lcvs;
-	M_LCVS_MBT lcvsmbt;
-	M_LCVS_MBR lcvsmbr;
-	M_Hausdorff haus;
-	M_TrajHaus trajhaus;
+	MLCSS lcss;
+	MLCVS lcvs;
+	MLCVSwithMBT lcvsmbt;
+	MLCVSwithMBR lcvsmbr;
+	MHausdorff haus;
+	MTrajHaus trajhaus;
 	private BufferedReader in;
 
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response, String method)
@@ -337,7 +337,7 @@ System.out.println(mg2.toString());
 					}
 				}
 				if (function.equals("M_LCSS")) {
-					lcss = new M_LCSS();
+					lcss = new MLCSS();
 					for (int i = 0; i < mglist.size() - 1; i++) {
 						for (int j = i + 1; j < mglist.size(); j++) {
 							double epsilon = Double.parseDouble(parameter.split("@")[1]);
@@ -349,7 +349,7 @@ System.out.println(mg2.toString());
 					}
 				}
 				if (function.equals("M_LCVS")) {
-					lcvs = new M_LCVS();
+					lcvs = new MLCVS();
 					for (int i = 0; i < mglist.size() - 1; i++) {
 						for (int j = i + 1; j < mglist.size(); j++) {
 							double delta = Double.parseDouble(parameter.split("@")[0]);
@@ -361,7 +361,7 @@ System.out.println(mg2.toString());
 				}
 				if (function.equals("M_LCVSMBT")) {
 
-					lcvsmbt = new M_LCVS_MBT();
+					lcvsmbt = new MLCVSwithMBT();
 					for (int i = 0; i < mglist.size() - 1; i++) {
 						for (int j = i + 1; j < mglist.size(); j++) {
 							double delta = Double.parseDouble(parameter.split("@")[0]);
@@ -372,7 +372,7 @@ System.out.println(mg2.toString());
 					}
 				}
 				if (function.equals("M_MCVSMBR")) {
-					lcvsmbr = new M_LCVS_MBR();
+					lcvsmbr = new MLCVSwithMBR();
 					for (int i = 0; i < mglist.size() - 1; i++) {
 						for (int j = i + 1; j < mglist.size(); j++) {
 							double delta = Double.parseDouble(parameter.split("@")[0]);
@@ -383,7 +383,7 @@ System.out.println(mg2.toString());
 					}
 				}
 				if (function.equals("M_TrajHausdorff")) {
-					trajhaus = new M_TrajHaus();
+					trajhaus = new MTrajHaus();
 					for (int i = 0; i < mglist.size() - 1; i++) {
 						for (int j = i + 1; j < mglist.size(); j++) {
 							double similar = trajhaus.calculate(mglist.get(i), mglist.get(j));
@@ -424,7 +424,7 @@ System.out.println(mg2.toString());
 				}
 				if (function.equals("M_Hausdorff")) {
 					System.out.println("visit" + "\t" + mglist.size());
-					haus = new M_Hausdorff();
+					haus = new MHausdorff();
 					for (int i = 0; i < mglist.size() - 1; i++) {
 						for (int j = i + 1; j < mglist.size(); j++) {
 							double similar = haus.measure(mglist.get(i), mglist.get(j));

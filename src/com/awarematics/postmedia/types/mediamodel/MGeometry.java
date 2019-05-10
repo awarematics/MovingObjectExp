@@ -168,7 +168,6 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 	
 	public static MBool intersects(MGeometry mg1, Geometry mg2) {
 		ArrayList<Long> timeList = new ArrayList<Long>();
-		ArrayList<Long> timeEventList = new ArrayList<Long>();
 		MGeometryFactory mgeom = new MGeometryFactory();
 		for (int i = 0; i < mg1.numOf(); i++) {
 			timeList.add(mg1.getTimes()[i]);
@@ -179,6 +178,7 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 
 		for (int i = 0; i < tempList.length; i++) {
 			if (mg1 instanceof MPoint){
+				@SuppressWarnings("deprecation")
 				Point p = new Point(mg1.getCoords()[i], null, 0);
 				if(p.intersects(mg2))
 					bools[i] = true;

@@ -3,28 +3,17 @@ package com.awarematics.postmedia.test;
 import java.io.IOException;
 
 import com.awarematics.postmedia.algorithms.distance.MovingDistance;
-import com.awarematics.postmedia.algorithms.similarity.MSimilarityMeasure;
-import com.awarematics.postmedia.algorithms.similarity.M_Hausdorff;
+import com.awarematics.postmedia.algorithms.similarity.MHausdorff;
 import com.awarematics.postmedia.io.MWKTReader;
 import com.awarematics.postmedia.mgeom.MGeometryFactory;
-import com.awarematics.postmedia.types.mediamodel.MDouble;
-import com.awarematics.postmedia.types.mediamodel.MPhoto;
 import com.awarematics.postmedia.types.mediamodel.MPoint;
-import com.awarematics.postmedia.types.mediamodel.MTime;
-import com.awarematics.postmedia.types.mediamodel.MVideo;
-import com.awarematics.postmedia.types.mediamodel.M_pointprojection;
-
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.io.ParseException;
 
 public class MpointTest {
 
 
-	static M_Hausdorff mh;
+	static MHausdorff mh;
 	public static void main(String[] args) throws IOException, ParseException, java.text.ParseException
 	{		
 		

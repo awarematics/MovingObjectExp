@@ -6,10 +6,10 @@ import java.text.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.awarematics.postmedia.algorithms.similarity.M_LCSS;
-import com.awarematics.postmedia.algorithms.similarity.M_LCVS;
-import com.awarematics.postmedia.algorithms.similarity.M_LCVS_MBT;
-import com.awarematics.postmedia.algorithms.similarity.M_LCVS_MBR;
+import com.awarematics.postmedia.algorithms.similarity.MLCSS;
+import com.awarematics.postmedia.algorithms.similarity.MLCVS;
+import com.awarematics.postmedia.algorithms.similarity.MLCVSwithMBT;
+import com.awarematics.postmedia.algorithms.similarity.MLCVSwithMBR;
 import com.awarematics.postmedia.io.MWKTReader;
 import com.awarematics.postmedia.mgeom.MGeometryFactory;
 import com.awarematics.postmedia.types.mediamodel.MVideo;
@@ -18,20 +18,20 @@ public class SimilarityTest {
 
 	public static final int ARRAY_SIZE = 1000;
 	public static final double EPSILON_R = 0.1;
-	private static M_LCSS lcss;
-	private static M_LCVS lcvs;
-	private static M_LCVS_MBT lcvsmbt;
-	private static M_LCVS_MBR lcvsmbr;
+	private static MLCSS lcss;
+	private static MLCVS lcvs;
+	private static MLCVSwithMBT lcvsmbt;
+	private static MLCVSwithMBR lcvsmbr;
 
 	public static void main(String[] args) throws org.locationtech.jts.io.ParseException, ParseException, IOException {
 		/*
 		 * test for bbd data straight direction
 		 */
 
-		lcss = new M_LCSS();
-		lcvs = new M_LCVS();
-		lcvsmbt = new M_LCVS_MBT();
-		lcvsmbr = new M_LCVS_MBR();
+		lcss = new MLCSS();
+		lcvs = new MLCVS();
+		lcvsmbt = new MLCVSwithMBT();
+		lcvsmbr = new MLCVSwithMBR();
 
 		// bootup
 		MVideo[] videos = new MVideo[ARRAY_SIZE];
