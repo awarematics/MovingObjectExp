@@ -1,17 +1,11 @@
 package com.awarematics.postmedia.test;
 import java.io.IOException;
 
+import org.locationtech.jts.io.ParseException;
+
 import com.awarematics.postmedia.io.MWKTReader;
 import com.awarematics.postmedia.mgeom.MGeometryFactory;
 import com.awarematics.postmedia.types.mediamodel.MPoint;
-import com.awarematics.postmedia.types.mediamodel.MPolygon;
-import com.awarematics.postmedia.types.mediamodel.MVideo;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.io.ParseException;
-import org.locationtech.jts.io.WKTReader;
 
 public class RelationshipTest {
 
@@ -24,11 +18,11 @@ public class RelationshipTest {
 		
 		MPoint mp = (MPoint)reader.read("MPOINT ((0 0) 1481480632123, (2 200) 1481480638000, (5 0) 1481480639123, (13 13) 1481480641123, (30 33) 1481480642556, (70 70) 1481480643223, (102 63) 1481480644123, (103 33) 1481480645556)");
 		MPoint mp2 = (MPoint)reader.read("MPOINT ((0 2) 1481480633123, (2 0) 1481480638000, (5 0) 1481480639123, (13 13) 1481480641123, (30 33) 1481480642556, (63 50) 1481480643523, (102 70) 1481480644123, (103 333) 1481480645556)");
-		MVideo mv = (MVideo)reader.read("MVIDEO (('localhost:///tmp/drone/test1.jpg' 200 200 60 0 0.1 30 0 0 'annotation' 'exif' 0 0) 1481480632123, ('localhost:///tmp/drone/test1.jpg' 200 200 60 0 0.1 30 0 0 'annotation' 'exif' 1 1) 1481480634123), ('localhost:///tmp/drone/test1.jpg' 200 200 60 0 0.1 30 0 0 'annotation' 'exif' 101.99 62.9) 1481480644123)");
+		//MVideo mv = (MVideo)reader.read("MVIDEO (('localhost:///tmp/drone/test1.jpg' 200 200 60 0 0.1 30 0 0 'annotation' 'exif' 0 0) 1481480632123, ('localhost:///tmp/drone/test1.jpg' 200 200 60 0 0.1 30 0 0 'annotation' 'exif' 1 1) 1481480634123), ('localhost:///tmp/drone/test1.jpg' 200 200 60 0 0.1 30 0 0 'annotation' 'exif' 101.99 62.9) 1481480644123)");
 		//MVideo mv2 = (MVideo)reader.read("MVIDEO (('localhost:///tmp/drone/test1.jpg' 200 200 60 0 0.1 30 0 0 'annotation' 'exif' -0.0001 -0.0001) 1481480632123, ('localhost:///tmp/drone/test1.jpg' 200 200 60 0 0.1 30 0 0 'annotation' 'exif' 0.99 0.99) 1481480634123), ('localhost:///tmp/drone/test1.jpg' 200 200 60 0 0.1 30 0 0 'annotation' 'exif' 102 63) 1481480644123)");
-		MPoint mp3 = (MPoint)reader.read("MPOINT ((0 0) 1581480632123, (0 2) 1581480638000)");
-		
-		MPolygon mpl = (MPolygon) reader.read("MPOLYGON ((0 0, 1 1, 1 0, 0 0) 1000)");
+		//MPoint mp3 = (MPoint)reader.read("MPOINT ((0 0) 1581480632123, (0 2) 1581480638000)");
+		System.out.println(mp.atomize(1000).toGeoString());
+		//MPolygon mpl = (MPolygon) reader.read("MPOLYGON ((0 0, 1 1, 1 0, 0 0) 1000)");
 	//	System.out.println(mpl.toGeoString());
 		
 	//	System.out.println(mp.relationship(mp, mp2));
@@ -92,7 +86,7 @@ public class RelationshipTest {
 		//System.out.println(mool2.toGeoString());
 
 		//System.out.println("---------------------------");
-		GeometryFactory geometryFactor = new GeometryFactory();
+		/*GeometryFactory geometryFactor = new GeometryFactory();
 		WKTReader readers = new WKTReader(geometryFactor);
 	        LineString geometry1 = (LineString) readers.read("LINESTRING(-1 0, 0 0, 0 0.5, 5 5)");
 	        LineString geometry2 = (LineString) readers.read("LINESTRING(-2 -2, 0 0, -1 0, -2 -5)"); 
@@ -103,7 +97,7 @@ public class RelationshipTest {
 	        Polygon geometry3 = (Polygon) readers.read("POLYGON ((0 0, 0 1, 1 1, 1 0, 0 0))"); Polygon geometry6 = (Polygon) readers.read("POLYGON ((0 0, 0 1, 1 1, 0 0))");
 	        Polygon geometry4 = (Polygon) readers.read("POLYGON ((0.25 0.25, 0.25 0.75, 0.75 0.75, 0.25 0.25))");
 	    
-	        System.out.println(geometry4.intersects(geometry3));
+	        System.out.println(geometry4.intersects(geometry3));*/
 	     /*   //线和线存在
 	        System.out.println(geometry1.overlaps(geometry2));//ture
 	       //多边形存在

@@ -16,8 +16,6 @@ public class MVideo extends MGeometry {
 	 */
 	private static final long serialVersionUID = 1L;
 	String[] uri;
-	double[] width;
-	double[] height;
 	double[] viewAngle;
 	double[] verticalAngle;
 	double[] distance;	
@@ -35,11 +33,9 @@ public class MVideo extends MGeometry {
 
 	}
 
-	public MVideo(String[] uri, double[] width, double[] height, double[] viewAngle,double[] verticalAngle,double[] distance,double[] direction,
+	public MVideo(String[] uri, double[] viewAngle,double[] verticalAngle,double[] distance,double[] direction,
 			double[] direction3d,double[] altitude,String[] annotationJson,	String[] exifJson,Coordinate[] coords,long[] creationTime, Polygon[] listPolygon, FoV[] fov) {
 		this.uri = uri;
-		this.width = width;
-		this.height = height;
 		this.viewAngle = viewAngle;
 		this.verticalAngle = verticalAngle;
 		this.distance = distance;
@@ -57,8 +53,6 @@ public class MVideo extends MGeometry {
 
 	public MVideo(MVideo mv) {
 		uri = mv.uri;
-		width =  mv.width;
-		height =  mv.height;
 		viewAngle =  mv.viewAngle;
 		verticalAngle =  mv.verticalAngle;
 		distance =  mv.distance;
@@ -106,8 +100,6 @@ public class MVideo extends MGeometry {
 		long now = 0;
 		
 		ArrayList<String> uriNor= new ArrayList<String>();
-		ArrayList<Double> widthNor= new ArrayList<Double>();
-		ArrayList<Double> heightNor= new ArrayList<Double>();
 		ArrayList<Double> viewAngleNor= new ArrayList<Double>();
 		ArrayList<Double> verticalAngleNor= new ArrayList<Double>();
 		ArrayList<Double> directionNor= new ArrayList<Double>();
@@ -135,8 +127,6 @@ public class MVideo extends MGeometry {
 				listPolygonNor.add((Polygon) snapshot(now));
 				creationTimeNor.add(now);
 				uriNor.add(uri[i]);
-				widthNor.add(width[i]);
-				heightNor.add(height[i]);
 				viewAngleNor.add(viewAngle[i]);
 				verticalAngleNor.add(verticalAngle[i]);
 				directionNor.add(direction[i]);
@@ -151,15 +141,31 @@ public class MVideo extends MGeometry {
 			}
 		}
 		//notice:  the method is not support in java-version 8     version 9 is OK
-		long[] creationTime = creationTimeNor.stream().mapToLong(i -> i).toArray();
-		double[] width = widthNor.stream().mapToDouble(i -> i).toArray();
-		double[] height = heightNor.stream().mapToDouble(i -> i).toArray();
-		double[] viewAngle = viewAngleNor.stream().mapToDouble(i -> i).toArray();
-		double[] verticalAngle = verticalAngleNor.stream().mapToDouble(i -> i).toArray();
-		double[] direction = directionNor.stream().mapToDouble(i -> i).toArray();
-		double[] distance = distanceNor.stream().mapToDouble(i -> i).toArray();
-		double[] direction3d = direction3dNor.stream().mapToDouble(i -> i).toArray();
-		double[] altitude = altitudeNor.stream().mapToDouble(i -> i).toArray();
+		long[] creationTime = new long[creationTimeNor.size()];
+		double[] viewAngle = new double[creationTimeNor.size()];
+		double[] direction = new double[creationTimeNor.size()];
+		double[] verticalAngle = new double[creationTimeNor.size()];
+		double[] distance = new double[creationTimeNor.size()];
+		double[] direction3d = new double[creationTimeNor.size()];
+		double[] altitude = new double[creationTimeNor.size()];
+		for(int i=0;i<creationTimeNor.size();i++){
+			creationTime[i] = creationTimeNor.get(i);
+			viewAngle[i] = viewAngleNor.get(i);
+			verticalAngle[i] = verticalAngleNor.get(i);
+			direction[i] = directionNor.get(i);
+			distance[i] = distanceNor.get(i);
+			direction3d[i] = direction3dNor.get(i);
+			altitude[i] = altitudeNor.get(i);
+		}	
+		//long[] creationTime = creationTimeNor.stream().mapToLong(i -> i).toArray();
+		//double[] width = widthNor.stream().mapToDouble(i -> i).toArray();
+		//double[] height = heightNor.stream().mapToDouble(i -> i).toArray();
+		//double[] viewAngle = viewAngleNor.stream().mapToDouble(i -> i).toArray();
+		//double[] verticalAngle = verticalAngleNor.stream().mapToDouble(i -> i).toArray();
+		//double[] direction = directionNor.stream().mapToDouble(i -> i).toArray();
+		//double[] distance = distanceNor.stream().mapToDouble(i -> i).toArray();
+		//double[] direction3d = direction3dNor.stream().mapToDouble(i -> i).toArray();
+		//double[] altitude = altitudeNor.stream().mapToDouble(i -> i).toArray();
 		Coordinate[] coords = new Coordinate[coordsNor.size()];
 		FoV[] fov = new FoV[coordsNor.size()];
 		Polygon[] listPolygon = new Polygon[coordsNor.size()];
@@ -175,7 +181,7 @@ public class MVideo extends MGeometry {
 			exifJson[i] = exifJsonNor.get(i);
 		}
 		MGeometryFactory geometryFactory = new MGeometryFactory();
-		return geometryFactory.createMVideo(uri, width, height,viewAngle,verticalAngle, distance, direction,direction3d, altitude,annotationJson,exifJson,coords,creationTime, listPolygon, fov );
+		return geometryFactory.createMVideo(uri,viewAngle,verticalAngle, distance, direction,direction3d, altitude,annotationJson,exifJson,coords,creationTime, listPolygon, fov );
 	}
 
 	@Override
@@ -183,8 +189,6 @@ public class MVideo extends MGeometry {
 		MGeometry pt = atomize(duration);
 		Coordinate[] coords = new Coordinate[2];
 		long[] creationTime = new long[2];
-		double[] width = new double[2];
-		double[] height = new double[2];
 		double[] viewAngle = new double[2];
 		double[] verticalAngle = new double[2];
 		double[] direction = new double[2];
@@ -201,10 +205,6 @@ public class MVideo extends MGeometry {
 		coords[1] = ((MVideo) pt).getCoords()[pt.numOf()-1];
 		creationTime[0] = pt.getTimes()[0];
 		creationTime[1] = pt.getTimes()[pt.numOf()-1];
-		width[0] = ((MVideo) pt).getWidth()[0];
-		width[1] = ((MVideo) pt).getWidth()[pt.numOf()-1];
-		height[0] = ((MVideo) pt).getHeight()[0];
-		height[1] = ((MVideo) pt).getHeight()[pt.numOf()-1];
 		viewAngle[0] = ((MVideo) pt).getViewAngle()[0];
 		viewAngle[1] = ((MVideo) pt).getViewAngle()[pt.numOf()-1];
 		verticalAngle[0] = ((MVideo) pt).getVerticalAngle()[0];
@@ -228,7 +228,7 @@ public class MVideo extends MGeometry {
 		exifJson[0] = ((MVideo) pt).getExifJson()[0];
 		exifJson[1] = ((MVideo) pt).getExifJson()[pt.numOf()-1];
 		MGeometryFactory geometryFactory = new MGeometryFactory();
-		return geometryFactory.createMVideo(uri, width, height,viewAngle,verticalAngle, distance, direction,direction3d, altitude,annotationJson,exifJson,coords,creationTime, listPolygon, fov);
+		return geometryFactory.createMVideo(uri,viewAngle,verticalAngle, distance, direction,direction3d, altitude,annotationJson,exifJson,coords,creationTime, listPolygon, fov);
 	}
 
 	@Override
@@ -243,10 +243,10 @@ public class MVideo extends MGeometry {
 		String mphotoString = "MVIDEO (";
 		for (int i = 0; i < numOf(); i++) {
 			if (i == 0){
-				mphotoString = mphotoString +"("+ uri[i] + " " + width[i] + " "+ height[i]+" "+ viewAngle[i]+" "+ verticalAngle[i]+" "+distance[i]+" "+direction[i]+" "+direction3d[i]+" "+altitude[i]+" "+annotationJson[i]+" "+exifJson[i]+" "+coords[i].x+" "+coords[i].y+") "+ creationTime[i];
+				mphotoString = mphotoString +"("+ uri[i] + " " + viewAngle[i]+" "+ verticalAngle[i]+" "+distance[i]+" "+direction[i]+" "+direction3d[i]+" "+altitude[i]+" "+annotationJson[i]+" "+exifJson[i]+" "+coords[i].x+" "+coords[i].y+") "+ creationTime[i];
 			} 
 			else{
-				mphotoString = mphotoString +", ("+ uri[i] + " " + width[i] + " "+ height[i]+" "+ viewAngle[i]+" "+ verticalAngle[i]+" "+distance[i]+" "+direction[i]+" "+direction3d[i]+" "+altitude[i]+" "+annotationJson[i]+" "+exifJson[i]+" "+coords[i].x+" "+coords[i].y+") "+ creationTime[i];
+				mphotoString = mphotoString +", ("+ uri[i] + " " +  viewAngle[i]+" "+ verticalAngle[i]+" "+distance[i]+" "+direction[i]+" "+direction3d[i]+" "+altitude[i]+" "+annotationJson[i]+" "+exifJson[i]+" "+coords[i].x+" "+coords[i].y+") "+ creationTime[i];
 				}
 		}
 		mphotoString = mphotoString + ")";
@@ -305,7 +305,7 @@ public class MVideo extends MGeometry {
         factory = new MGeometryFactory();  
         if ( creationTime.length == 1)
         {        
-			return factory.createMVideo( uri, width, height,viewAngle,verticalAngle, distance, direction,direction3d, altitude,annotationJson,exifJson,coords,creationTime, listPolygon, fov );			
+			return factory.createMVideo( uri,viewAngle,verticalAngle, distance, direction,direction3d, altitude,annotationJson,exifJson,coords,creationTime, listPolygon, fov );			
         }	
         int num = 0;
         for( int i = 0; i < creationTime.length; i++)
@@ -318,8 +318,6 @@ public class MVideo extends MGeometry {
         if(num==0)
         	return null;
         String[] uril = new String[num];
-		double[] widthl = new double[num];
-		double[] heightl = new double[num];
 		double[] viewAnglel = new double[num];
 		double[] verticalAnglel = new double[num];
 		double[] distancel = new double[num];	
@@ -339,8 +337,6 @@ public class MVideo extends MGeometry {
         	if( creationTime[i] <= overlappedEndTime && creationTime[i] >= overlappedStartTime )
         	{
         		uril[value] = uri[i];
-        		widthl[value] =  width[i];
-        		heightl[value] =  height[i];
         		viewAnglel[value] =  viewAngle[i];
         		verticalAnglel[value] =  verticalAngle[i];
         		distancel[value] = distance[i];
@@ -356,7 +352,7 @@ public class MVideo extends MGeometry {
         		value++;
         	}
         }    
-	    return factory.createMVideo(uril, widthl, heightl,viewAnglel,verticalAnglel, distancel, directionl,direction3dl, altitudel,annotationJsonl,exifJsonl,coordsl, creationTimel, listPolygonl, fovl );
+	    return factory.createMVideo(uril, viewAnglel,verticalAnglel, distancel, directionl,direction3dl, altitudel,annotationJsonl,exifJsonl,coordsl, creationTimel, listPolygonl, fovl );
 	}
 
 	@Override
@@ -368,8 +364,6 @@ public class MVideo extends MGeometry {
 	@Override
 	public MGeometry first() {
 		String[] uril = new String[1];
-		double[] widthl = new double[1];
-		double[] heightl = new double[1];
 		double[] viewAnglel = new double[1];
 		double[] verticalAnglel = new double[1];
 		double[] distancel = new double[1];	
@@ -385,8 +379,6 @@ public class MVideo extends MGeometry {
 		coordsl[0] = coords[0];
 		creationTimel[0] = creationTime[0];
 		uril[0] = uri[0];
-		widthl[0] = width[0];
-		heightl[0] = height[0];
 		viewAnglel[0] = viewAngle[0];
 		verticalAnglel[0] = verticalAngle[0];
 		distancel[0] = distance[0];
@@ -397,14 +389,12 @@ public class MVideo extends MGeometry {
 		exifJsonl[0] = exifJson[0];
 		listPolygonl[0] = listPolygon[0];
 		fovl[0] = fov[0];
-		return new MVideo(uril, widthl, heightl,viewAnglel,verticalAnglel, distancel, directionl,direction3dl, altitudel,annotationJsonl,exifJsonl,coordsl, creationTimel, listPolygonl, fovl);
+		return new MVideo(uril,viewAnglel,verticalAnglel, distancel, directionl,direction3dl, altitudel,annotationJsonl,exifJsonl,coordsl, creationTimel, listPolygonl, fovl);
 	}
 
 	@Override
 	public MGeometry last() {
 		String[] uril = new String[1];
-		double[] widthl = new double[1];
-		double[] heightl = new double[1];
 		double[] viewAnglel = new double[1];
 		double[] verticalAnglel = new double[1];
 		double[] distancel = new double[1];	
@@ -420,8 +410,6 @@ public class MVideo extends MGeometry {
 		coordsl[0] = coords[coords.length-1];
 		creationTimel[0] = creationTime[coords.length-1];
 		uril[0] = uri[coords.length-1];
-		widthl[0] = width[coords.length-1];
-		heightl[0] = height[coords.length-1];
 		viewAnglel[0] = viewAngle[coords.length-1];
 		verticalAnglel[0] = verticalAngle[coords.length-1];
 		distancel[0] = distance[coords.length-1];
@@ -432,14 +420,12 @@ public class MVideo extends MGeometry {
 		exifJsonl[0] = exifJson[coords.length-1];
 		listPolygonl[0] = listPolygon[coords.length-1];
 		fovl[0] = fov[coords.length-1];
-		return new MVideo(uril, widthl, heightl,viewAnglel,verticalAnglel, distancel, directionl,direction3dl, altitudel,annotationJsonl,exifJsonl,coordsl, creationTimel, listPolygonl, fovl);
+		return new MVideo(uril, viewAnglel,verticalAnglel, distancel, directionl,direction3dl, altitudel,annotationJsonl,exifJsonl,coordsl, creationTimel, listPolygonl, fovl);
 	}
 
 	@Override
 	public MGeometry at(int n) {
 		String[] uril = new String[1];
-		double[] widthl = new double[1];
-		double[] heightl = new double[1];
 		double[] viewAnglel = new double[1];
 		double[] verticalAnglel = new double[1];
 		double[] distancel = new double[1];	
@@ -452,11 +438,10 @@ public class MVideo extends MGeometry {
 		long[] creationTimel = new long[1];
 		Polygon[] listPolygonl = new Polygon[1];
 		FoV[] fovl = new FoV[1];
+
 		coordsl[0] = coords[n-1];
 		creationTimel[0] = creationTime[n-1];
 		uril[0] = uri[n-1];
-		widthl[0] = width[n-1];
-		heightl[0] = height[n-1];
 		viewAnglel[0] = viewAngle[n-1];
 		verticalAnglel[0] = verticalAngle[n-1];
 		distancel[0] = distance[n-1];
@@ -466,8 +451,8 @@ public class MVideo extends MGeometry {
 		annotationJsonl[0] = annotationJson[n-1];
 		exifJsonl[0] = exifJson[n-1];
 		listPolygonl[0] = listPolygon[n-1];
-		fovl[0] = fov[n-1];
-		return new MVideo(uril, widthl, heightl,viewAnglel,verticalAnglel, distancel, directionl,direction3dl, altitudel,annotationJsonl,exifJsonl,coordsl, creationTimel, listPolygonl, fovl);
+		fovl[0] = fov[n-1];		
+		return new MVideo(uril,viewAnglel,verticalAnglel, distancel, directionl,direction3dl, altitudel,annotationJsonl,exifJsonl,coordsl, creationTimel, listPolygonl, fovl);
 	}
 
 	public String[] getUri() {
@@ -477,23 +462,7 @@ public class MVideo extends MGeometry {
 	public void setUri(String[] uri) {
 		this.uri = uri;
 	}
-
-	public double[] getWidth() {
-		return width;
-	}
-
-	public void setWidth(double[] width) {
-		this.width = width;
-	}
-
-	public double[] getHeight() {
-		return height;
-	}
-
-	public void setHeight(double[] height) {
-		this.height = height;
-	}
-
+	
 	public double[] getViewAngle() {
 		return viewAngle;
 	}
@@ -716,8 +685,6 @@ public class MVideo extends MGeometry {
 	public MGeometry snapToGrid(double cellSize) {
 		MGeometryFactory mgeometryFactory = new MGeometryFactory();
 		String[] uriGrid = uri;
-		double[] widthGrid = width;
-		double[] heightGrid = height;
 		double[] viewAngleGrid =viewAngle;
 		double[] verticalAngleGrid =verticalAngle;
 		double[] distanceGrid =  distance;	
@@ -757,7 +724,7 @@ public class MVideo extends MGeometry {
 				coordGrid[i].y =  coords[i].y - gridDistanceY;
 			}
 		}	
-		return mgeometryFactory.createMPhoto(uriGrid, widthGrid, heightGrid,viewAngleGrid,verticalAngleGrid, distanceGrid, directionGrid,direction3dGrid, altitudeGrid,annotationJsonGrid,exifJsonGrid,coordGrid, timesGrid, listPolygonGrid, fovGrid );
+		return mgeometryFactory.createMVideo(uriGrid,viewAngleGrid,verticalAngleGrid, distanceGrid, directionGrid,direction3dGrid, altitudeGrid,annotationJsonGrid,exifJsonGrid,coordGrid, timesGrid, listPolygonGrid, fovGrid );
 	
 	}
 
@@ -791,6 +758,15 @@ public class MVideo extends MGeometry {
 			mp[i].to=(at(i+1).getTimes()[0]); 
 		}		
 		return mp[numOf()-1];
+		/*
+		 * Period[] mp = new Period[numOf()];
+		for (int i = 1; i < numOf(); i++) {
+			mp[i] = new Period();
+			mp[i].from = (first().getTimes()[0]);
+			mp[i].to = (at(i+1).getTimes()[0]);
+		}
+		return mp[numOf() - 1];
+		 */
 	}
 	@Override
 	public Period time(int n) {

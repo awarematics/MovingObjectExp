@@ -144,7 +144,7 @@ public class GetAndPostProjection extends HttpServlet {
 						annotationJson[j] = "annotationJson.json";
 						exifJson[j] = "exifJson.json";
 					}
-					mg = mgeometryFactory.createMVideo(uri, width, height, viewAngle, verticalAngle, distance, direction, direction3d, altitude, annotationJson, exifJson, coords, creationTime, listPolygon, fov);
+					mg = mgeometryFactory.createMVideo(uri, viewAngle, verticalAngle, distance, direction, direction3d, altitude, annotationJson, exifJson, coords, creationTime, listPolygon, fov);
 				}
 				if (type.equals("mpolygon")) {
 					for (int j = 0; j < data2.length; j++) {

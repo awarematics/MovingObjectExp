@@ -35,8 +35,11 @@ public class AtomicTimeGenerator implements TimeGenerator {
 	
 	public long[] finalTime(long[] timeArea){
 		ArrayList<Long> nowTime = new ArrayList<Long>();
-		standardTime(timeArea, nowTime);				
-		long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
+		standardTime(timeArea, nowTime);
+		long[] tempList = new long[nowTime.size()];
+		for(int i=0;i<nowTime.size();i++)
+			tempList[i] = nowTime.get(i);				
+		//long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
 		return tempList;
 	}
 	
@@ -65,4 +68,5 @@ public class AtomicTimeGenerator implements TimeGenerator {
 	}
 
 }
+
 

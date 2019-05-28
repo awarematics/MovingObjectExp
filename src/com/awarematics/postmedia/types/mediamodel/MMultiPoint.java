@@ -261,3 +261,4 @@ public class MMultiPoint extends MGeometry {
 	}
 
 }
+

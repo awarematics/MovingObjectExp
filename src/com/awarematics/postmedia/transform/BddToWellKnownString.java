@@ -1,4 +1,4 @@
-package com.awarematics.postmedia.test;
+package com.awarematics.postmedia.transform;
 
 import java.io.File;
 import java.io.IOException;

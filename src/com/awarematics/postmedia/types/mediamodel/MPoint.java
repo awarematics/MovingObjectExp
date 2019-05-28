@@ -28,7 +28,6 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.WKTReader;
 
 import com.awarematics.postmedia.io.MWKTReader;
-import com.awarematics.postmedia.io.MWKTWriter;
 import com.awarematics.postmedia.mgeom.MGeometryFactory;
 import com.awarematics.postmedia.types.ev.impl.MCoordinateArraySequence;
 
@@ -162,7 +161,10 @@ public class MPoint extends MGeometry {
 
 		}
 		// notice: the method is not support in java-version 8 version 9 is OK
-		long[] tempList = timesNor.stream().mapToLong(i -> i).toArray();
+		long[] tempList = new long[timesNor.size()];
+		for(int i=0;i<timesNor.size();i++)
+			tempList[i] = timesNor.get(i);	
+		//long[] tempList = timesNor.stream().mapToLong(i -> i).toArray();
 		Coordinate[] coords = new Coordinate[coordsNor.size()];
 		for (int i = 0; i < coordsNor.size(); i++)
 			coords[i] = coordsNor.get(i);

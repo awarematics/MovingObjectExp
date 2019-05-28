@@ -50,3 +50,4 @@ public class MInstant extends MTime {
 	}
 
 }
+

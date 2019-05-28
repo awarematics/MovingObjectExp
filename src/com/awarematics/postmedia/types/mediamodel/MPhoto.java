@@ -390,15 +390,35 @@ public class MPhoto extends MGeometry {
 			}
 		}
 		//notice:  the method is not support in java-version 8     version 9 is OK
-		long[] creationTime = creationTimeNor.stream().mapToLong(i -> i).toArray();
-		double[] width = widthNor.stream().mapToDouble(i -> i).toArray();
-		double[] height = heightNor.stream().mapToDouble(i -> i).toArray();
-		double[] viewAngle = viewAngleNor.stream().mapToDouble(i -> i).toArray();
-		double[] verticalAngle = verticalAngleNor.stream().mapToDouble(i -> i).toArray();
-		double[] direction = directionNor.stream().mapToDouble(i -> i).toArray();
-		double[] distance = distanceNor.stream().mapToDouble(i -> i).toArray();
-		double[] direction3d = direction3dNor.stream().mapToDouble(i -> i).toArray();
-		double[] altitude = altitudeNor.stream().mapToDouble(i -> i).toArray();
+		long[] creationTime = new long[creationTimeNor.size()];
+		double[] width = new double[creationTimeNor.size()];
+		double[] height = new double[creationTimeNor.size()];
+		double[] viewAngle = new double[creationTimeNor.size()];
+		double[] direction = new double[creationTimeNor.size()];
+		double[] verticalAngle = new double[creationTimeNor.size()];
+		double[] distance = new double[creationTimeNor.size()];
+		double[] direction3d = new double[creationTimeNor.size()];
+		double[] altitude = new double[creationTimeNor.size()];
+		for(int i=0;i<creationTimeNor.size();i++){
+			creationTime[i] = creationTimeNor.get(i);
+			width[i] = widthNor.get(i);
+			height[i] = heightNor.get(i);
+			viewAngle[i] = viewAngleNor.get(i);
+			verticalAngle[i] = verticalAngleNor.get(i);
+			direction[i] = directionNor.get(i);
+			distance[i] = distanceNor.get(i);
+			direction3d[i] = direction3dNor.get(i);
+			altitude[i] = altitudeNor.get(i);
+		}	
+		//long[] creationTime = creationTimeNor.stream().mapToLong(i -> i).toArray();
+		//double[] width = widthNor.stream().mapToDouble(i -> i).toArray();
+		//double[] height = heightNor.stream().mapToDouble(i -> i).toArray();
+		//double[] viewAngle = viewAngleNor.stream().mapToDouble(i -> i).toArray();
+		//double[] verticalAngle = verticalAngleNor.stream().mapToDouble(i -> i).toArray();
+		//double[] direction = directionNor.stream().mapToDouble(i -> i).toArray();
+		//double[] distance = distanceNor.stream().mapToDouble(i -> i).toArray();
+		//double[] direction3d = direction3dNor.stream().mapToDouble(i -> i).toArray();
+		//double[] altitude = altitudeNor.stream().mapToDouble(i -> i).toArray();
 		Coordinate[] coords = new Coordinate[coordsNor.size()];
 		FoV[] fov = new FoV[coordsNor.size()];
 		Polygon[] listPolygon = new Polygon[coordsNor.size()];

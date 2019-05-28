@@ -1,11 +1,10 @@
 package com.awarematics.postmedia.operation;
 
-import com.awarematics.postmedia.types.mediamodel.MBool;
 import com.awarematics.postmedia.types.mediamodel.MGeometry;
 
-public class MRelateOp {
+public class SpatialTemporalOP {
 
-	 public static MBool intesects( MGeometry mg1, MGeometry mg2 )
+	 public static MGeometry M_At( MGeometry mg1, int n )
 	 {
 		 
 		 return null;

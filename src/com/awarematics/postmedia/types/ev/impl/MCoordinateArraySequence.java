@@ -19,3 +19,4 @@ public class MCoordinateArraySequence {
 		this.times = times;
 	}
 }
+

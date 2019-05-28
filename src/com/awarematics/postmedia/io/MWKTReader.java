@@ -529,8 +529,6 @@ public class MWKTReader {
 		String[] temp2 = temp1.split(", ");
 
 		String[] uri = new String[temp2.length];
-		double[] width = new double[temp2.length];
-		double[] height = new double[temp2.length];
 		double[] viewAngle = new double[temp2.length];
 		double[] verticalAngle = new double[temp2.length];
 		double[] distance = new double[temp2.length];	
@@ -546,31 +544,27 @@ public class MWKTReader {
 		for (int i = 0; i < temp2.length; i++) {
 			String[] temp3 = temp2[i].split(" ");
 			uri[i] = temp3[0];
-			width[i] = Double.parseDouble(temp3[1]);
-			height[i] = Double.parseDouble(temp3[2]);
-			viewAngle[i] = Double.parseDouble(temp3[3]);
-			verticalAngle[i] = Double.parseDouble(temp3[4]);
-			distance[i] = Double.parseDouble(temp3[5]);
-			direction[i] = Double.parseDouble(temp3[6]);
-			direction3d[i] = Double.parseDouble(temp3[7]);
-			altitude[i] = Double.parseDouble(temp3[8]);
-			annotationJson[i] = (String.valueOf(temp3[9]));
-			exifJson[i] =(String.valueOf(temp3[10]));
+			viewAngle[i] = Double.parseDouble(temp3[1]);
+			verticalAngle[i] = Double.parseDouble(temp3[2]);
+			distance[i] = Double.parseDouble(temp3[3]);
+			direction[i] = Double.parseDouble(temp3[4]);
+			direction3d[i] = Double.parseDouble(temp3[5]);
+			altitude[i] = Double.parseDouble(temp3[6]);
+			annotationJson[i] = (String.valueOf(temp3[7]));
+			exifJson[i] =(String.valueOf(temp3[8]));
 			
 			coords[i] = new Coordinate();
-			coords[i].x = Double.parseDouble(temp3[11]);
-			coords[i].y = Double.parseDouble(temp3[12]);
-			creationTime[i] = Long.parseLong(temp3[13]);
+			coords[i].x = Double.parseDouble(temp3[9]);
+			coords[i].y = Double.parseDouble(temp3[10]);
+			creationTime[i] = Long.parseLong(temp3[11]);
 			fov[i] = new FoV();
-			fov[i].setDirection(Double.parseDouble(temp3[6]));
-			fov[i].setDistance(Double.parseDouble(temp3[5]));
-			fov[i].setViewAngle(Double.parseDouble(temp3[3]));
+			fov[i].setDirection(Double.parseDouble(temp3[4]));
+			fov[i].setDistance(Double.parseDouble(temp3[3]));
+			fov[i].setViewAngle(Double.parseDouble(temp3[1]));
 			fov[i].setCoord(coords[i]);
 			listPolygon[i] = genFoVArea(coords[i].x, coords[i].y, fov[i]);
 		}
-		MVideo mv =  geometryFactory.createMVideo(uri, width, height,viewAngle,verticalAngle, distance, direction,direction3d, altitude,annotationJson,exifJson,coords,creationTime, listPolygon, fov);
-		//new MVideo(uris, hangle, fovl, stamp, attitude, coords, pols);
-		//System.out.println("visit");
+		MVideo mv =  geometryFactory.createMVideo(uri,viewAngle,verticalAngle, distance, direction,direction3d, altitude,annotationJson,exifJson,coords,creationTime, listPolygon, fov);
 		getNextCloser();
 		return mv;
 	}

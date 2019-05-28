@@ -189,7 +189,10 @@ public class MPolygon extends MGeometry {
 
 		}
 		// notice: the method is not support in java-version 8 version 9 is OK
-		long[] tempList = timesNor.stream().mapToLong(i -> i).toArray();
+		long[] tempList = new long[timesNor.size()];
+		for(int i=0;i<timesNor.size();i++)
+			tempList[i] = timesNor.get(i);	
+//long[] tempList = timesNor.stream().mapToLong(i -> i).toArray();
 		Polygon[] polygon = new Polygon[polNor.size()];
 		for (int i = 0; i < polNor.size(); i++)
 			polygon[i] = polNor.get(i);
@@ -548,3 +551,4 @@ public class MPolygon extends MGeometry {
 	}
 
 }
+

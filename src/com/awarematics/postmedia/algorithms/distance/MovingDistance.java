@@ -60,9 +60,14 @@ public class MovingDistance {
 			distances.add(temp);
 			times.add(time);
 		}
-		
-		double[] value = distances.stream().mapToDouble(i -> i).toArray();
-		long[] targets = times.stream().mapToLong(i -> i).toArray();
+		double[] value = new double[distances.size()];		
+		long[] targets = new long[times.size()];
+		for(int i=0;i<distances.size();i++)
+			value[i] = distances.get(i);	
+		for(int i=0;i<times.size();i++)
+			targets[i] = times.get(i);			
+		//double[] value = distances.stream().mapToDouble(i -> i).toArray();
+		//long[] targets = times.stream().mapToLong(i -> i).toArray();
 	/*
 	 * delete repeat time;
 	 */
@@ -96,8 +101,14 @@ public class MovingDistance {
 				tt.add(targets[i]);
 			}
 		}
-		double[] value2 = St.stream().mapToDouble(i -> i).toArray();
-		long[] targets2 = tt.stream().mapToLong(i -> i).toArray();
+		double[] value2 = new double[St.size()];		
+		long[] targets2 = new long[tt.size()];
+		for(int i=0;i<St.size();i++)
+			value2[i] = St.get(i);	
+		for(int i=0;i<tt.size();i++)
+			targets2[i] = tt.get(i);	
+		//double[] value2 = St.stream().mapToDouble(i -> i).toArray();
+		//long[] targets2 = tt.stream().mapToLong(i -> i).toArray();
 		
 		MGeometryFactory geometryFactory = new MGeometryFactory();
 		MDouble mdouble = geometryFactory.createMDouble(value2, targets2);
@@ -119,8 +130,14 @@ public class MovingDistance {
 			distances.add(temp);
 			times.add(time);
 		}
-		double[] value = distances.stream().mapToDouble(i -> i).toArray();
-		long[] targets = times.stream().mapToLong(i -> i).toArray();
+		double[] value = new double[distances.size()];		
+		long[] targets = new long[times.size()];
+		for(int i=0;i<distances.size();i++)
+			value[i] = distances.get(i);	
+		for(int i=0;i<times.size();i++)
+			targets[i] = times.get(i);
+		//double[] value = distances.stream().mapToDouble(i -> i).toArray();
+		//long[] targets = times.stream().mapToLong(i -> i).toArray();
 		
 		MGeometryFactory geometryFactory = new MGeometryFactory();
 		MDouble mdouble = geometryFactory.createMDouble(value, targets);
@@ -142,9 +159,14 @@ public class MovingDistance {
 			distances.add(temp);
 			times.add(time);
 		}
-		
-		double[] value = distances.stream().mapToDouble(i -> i).toArray();
-		long[] targets = times.stream().mapToLong(i -> i).toArray();
+		double[] value = new double[distances.size()];		
+		long[] targets = new long[times.size()];
+		for(int i=0;i<distances.size();i++)
+			value[i] = distances.get(i);	
+		for(int i=0;i<times.size();i++)
+			targets[i] = times.get(i);
+		//double[] value = distances.stream().mapToDouble(i -> i).toArray();
+		//long[] targets = times.stream().mapToLong(i -> i).toArray();
 		
 		MGeometryFactory geometryFactory = new MGeometryFactory();
 		MDouble mdouble = geometryFactory.createMDouble(value, targets);
@@ -159,3 +181,4 @@ public class MovingDistance {
 		return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 	}
 }
+

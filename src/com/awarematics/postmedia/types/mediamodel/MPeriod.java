@@ -42,3 +42,4 @@ public class MPeriod extends MTime {
 		this.period = period;
 	}
 }
+

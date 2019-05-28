@@ -154,9 +154,9 @@ public class MGeometryFactory {
 		return new MPolygon(mpol);
 	}
 
-	public MVideo createMVideo(String[] uri, double[] width, double[] height, double[] viewAngle,double[] verticalAngle,double[] distance,double[] direction,
+	public MVideo createMVideo(String[] uri, double[] viewAngle,double[] verticalAngle,double[] distance,double[] direction,
 			double[] direction3d,double[] altitude,String[] annotationJson,	String[] exifJson,Coordinate[] coords,long[] creationTime, Polygon[] listPolygon, FoV[] fov) {
-		MVideo mv = new MVideo(uri, width, height,viewAngle,verticalAngle, distance, direction,direction3d, altitude,annotationJson,exifJson,coords,creationTime, listPolygon, fov);
+		MVideo mv = new MVideo(uri,viewAngle,verticalAngle, distance, direction,direction3d, altitude,annotationJson,exifJson,coords,creationTime, listPolygon, fov);
 		return createMVideo(mv);
 	}
 
@@ -171,3 +171,4 @@ public class MGeometryFactory {
 	}
 
 }
+

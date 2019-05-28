@@ -145,8 +145,14 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 		set.addAll(timeList);
 		timeList.clear();
 		timeList.addAll(set);
-		long[] tempList = timeList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
-		long[] tempNoEventList = timeEventList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
+		long[] tempList = new long[timeList.size()];
+		for(int i=0;i<timeList.size();i++)
+			tempList[i] = timeList.get(i);	
+		long[] tempNoEventList = new long[timeEventList.size()];
+		for(int i=0;i<timeEventList.size();i++)
+			tempNoEventList[i] = timeEventList.get(i);	
+		//long[] tempList = timeList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
+		//long[] tempNoEventList = timeEventList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
 		Arrays.sort(tempList);
 		Arrays.sort(tempNoEventList);
 		boolean[] bools = new boolean[timeList.size()];
@@ -171,8 +177,11 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 		MGeometryFactory mgeom = new MGeometryFactory();
 		for (int i = 0; i < mg1.numOf(); i++) {
 			timeList.add(mg1.getTimes()[i]);
-		}		
-		long[] tempList = timeList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
+		}
+		long[] tempList = new long[timeList.size()];
+		for(int i=0;i<timeList.size();i++)
+			tempList[i] = timeList.get(i);		
+		//long[] tempList = timeList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
 		
 		boolean[] bools = new boolean[timeList.size()];
 
@@ -233,7 +242,10 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 		set.addAll(timeList);
 		timeList.clear();
 		timeList.addAll(set);
-		long[] tempList = timeList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
+		long[] tempList = new long[timeList.size()];
+		for(int i=0;i<timeList.size();i++)
+			tempList[i] = timeList.get(i);	
+		//long[] tempList = timeList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
 		Arrays.sort(tempList);
 		//System.out.println(tempList.length);
 		ArrayList<Long> result = new ArrayList<Long>();
@@ -293,7 +305,10 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 		sest.addAll(result);
 		result.clear();
 		result.addAll(sest);
-		long[] resultList = result.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
+		long[] resultList = new long[result.size()];
+		for(int i=0;i<result.size();i++)
+			resultList[i] = result.get(i);	
+		//long[] resultList = result.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
 		Arrays.sort(resultList);
 		return mgeom.createMInstant(resultList);}
 	}
@@ -483,3 +498,4 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 		
 	}
 }
+

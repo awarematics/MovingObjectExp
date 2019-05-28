@@ -41,7 +41,10 @@ public class EventTimeGenerator implements TimeGenerator {
 			for (int i = 0; i < nowTime.size(); i++) {
 				coordinates[i] = coords.get(i);
 			}
-			long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
+		long[] tempList = new long[nowTime.size()];
+		for(int i=0;i<nowTime.size();i++)
+			tempList[i] = nowTime.get(i);	
+			//long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
 			MPoint mp = new MPoint(coordinates, tempList);
 			return eventTime(line1, line2, mp, timeList);
 		}
@@ -58,7 +61,10 @@ public class EventTimeGenerator implements TimeGenerator {
 			for (int i = 0; i < nowTime.size(); i++) {
 				coordinates[i] = coords.get(i);
 			}
-			long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
+long[] tempList = new long[nowTime.size()];
+		for(int i=0;i<nowTime.size();i++)
+			tempList[i] = nowTime.get(i);	
+			//long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
 			MPoint mp = new MPoint(coordinates, tempList);
 			return eventTime(line1, line2, mp, timeList);
 		}
@@ -75,7 +81,10 @@ public class EventTimeGenerator implements TimeGenerator {
 			for (int i = 0; i < nowTime.size(); i++) {
 				coordinates[i] = coords.get(i);
 			}
-			long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
+long[] tempList = new long[nowTime.size()];
+		for(int i=0;i<nowTime.size();i++)
+			tempList[i] = nowTime.get(i);	
+			//long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
 			MPoint mp = new MPoint(coordinates, tempList);
 			return eventTime(line1, line2, mp, timeList);
 		}
@@ -92,7 +101,10 @@ public class EventTimeGenerator implements TimeGenerator {
 			for (int i = 0; i < nowTime.size(); i++) {
 				coordinates[i] = coords.get(i);
 			}
-			long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
+long[] tempList = new long[nowTime.size()];
+		for(int i=0;i<nowTime.size();i++)
+			tempList[i] = nowTime.get(i);	
+			//long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
 			MPoint mp = new MPoint(coordinates, tempList);
 			return eventTime(line1, line2, mp, timeList);
 		}
@@ -121,7 +133,10 @@ public class EventTimeGenerator implements TimeGenerator {
 			for (int i = 0; i < nowTime.size(); i++) {
 				coordinates[i] = coords.get(i);
 			}
-			long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
+long[] tempList = new long[nowTime.size()];
+		for(int i=0;i<nowTime.size();i++)
+			tempList[i] = nowTime.get(i);	
+			//long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
 			MPoint mp = new MPoint(coordinates, tempList);
 			return eventTime(line1, geo, mp, timeList);
 		}
@@ -138,7 +153,10 @@ public class EventTimeGenerator implements TimeGenerator {
 			for (int i = 0; i < nowTime.size(); i++) {
 				coordinates[i] = coords.get(i);
 			}
-			long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
+long[] tempList = new long[nowTime.size()];
+		for(int i=0;i<nowTime.size();i++)
+			tempList[i] = nowTime.get(i);	
+			//long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
 			MPoint mp = new MPoint(coordinates, tempList);
 			return eventTime(line1, geo, mp, timeList);
 		}
@@ -155,7 +173,10 @@ public class EventTimeGenerator implements TimeGenerator {
 			for (int i = 0; i < nowTime.size(); i++) {
 				coordinates[i] = coords.get(i);
 			}
-			long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
+long[] tempList = new long[nowTime.size()];
+		for(int i=0;i<nowTime.size();i++)
+			tempList[i] = nowTime.get(i);	
+			//long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
 			MPoint mp = new MPoint(coordinates, tempList);
 			return eventTime(line1, geo, mp, timeList);
 		}
@@ -183,7 +204,10 @@ public class EventTimeGenerator implements TimeGenerator {
 			for (int i = 0; i < nowTime.size(); i++) {
 				coordinates[i] = coords.get(i);
 			}
-			long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
+long[] tempList = new long[nowTime.size()];
+		for(int i=0;i<nowTime.size();i++)
+			tempList[i] = nowTime.get(i);	
+			//long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
 			MPoint mp = new MPoint(coordinates, tempList);
 			return eventTime(line1, geo, mp, timeList);
 		}
@@ -200,7 +224,11 @@ public class EventTimeGenerator implements TimeGenerator {
 			for (int i = 0; i < nowTime.size(); i++) {
 				coordinates[i] = coords.get(i);
 			}
-			long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
+
+long[] tempList = new long[nowTime.size()];
+		for(int i=0;i<nowTime.size();i++)
+			tempList[i] = nowTime.get(i);	
+			//long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
 			MPoint mp = new MPoint(coordinates, tempList);
 			return eventTime(line1, geo, mp, timeList);
 		}
@@ -217,7 +245,11 @@ public class EventTimeGenerator implements TimeGenerator {
 			for (int i = 0; i < nowTime.size(); i++) {
 				coordinates[i] = coords.get(i);
 			}
-			long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
+
+long[] tempList = new long[nowTime.size()];
+		for(int i=0;i<nowTime.size();i++)
+			tempList[i] = nowTime.get(i);	
+			//long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
 			MPoint mp = new MPoint(coordinates, tempList);
 			return eventTime(line1, geo, mp, timeList);
 		}
@@ -246,12 +278,20 @@ public class EventTimeGenerator implements TimeGenerator {
 				set.addAll(timeList);
 				timeList.clear();
 				timeList.addAll(set);
-				long[] tempList = timeList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
+
+long[] tempList = new long[timeList.size()];
+		for(int i=0;i<timeList.size();i++)
+			tempList[i] = timeList.get(i);	
+				//long[] tempList = timeList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
 				Arrays.sort(tempList);
 				return tempList;
 			 
 		} else {
-			long[] tempList = timeList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
+		
+			long[] tempList = new long[timeList.size()];
+			for(int i=0;i<timeList.size();i++)
+				tempList[i] = timeList.get(i);	
+			//long[] tempList = timeList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
 			Arrays.sort(tempList);
 			return tempList;
 		}}catch (Exception e) {
@@ -362,3 +402,4 @@ public class EventTimeGenerator implements TimeGenerator {
 	}
 
 }
+

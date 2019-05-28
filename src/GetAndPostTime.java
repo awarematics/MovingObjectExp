@@ -216,7 +216,7 @@ System.out.println(mg2.toString());
 							annotationJson[j] = "annotationJson.json";
 							exifJson[j] = "exifJson.json";
 						}
-						mg = mgeometryFactory.createMVideo(uri, width, height, viewAngle, verticalAngle, distance,
+						mg = mgeometryFactory.createMVideo(uri,viewAngle, verticalAngle, distance,
 								direction, direction3d, altitude, annotationJson, exifJson, coords, creationTime,
 								listPolygon, fov);
 						mglist.add(mg);

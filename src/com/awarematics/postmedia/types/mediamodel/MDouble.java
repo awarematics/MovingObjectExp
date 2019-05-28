@@ -10,7 +10,7 @@ import org.locationtech.jts.geom.Polygon;
 /*
  *  MDouble (x y, x y, x y)  
  */
-public class MDouble extends MGeometry {
+public class MDouble extends MGeometry  {
 
 	/**
 	 * 
@@ -269,3 +269,4 @@ public class MDouble extends MGeometry {
 	}
 
 }
+
