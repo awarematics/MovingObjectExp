@@ -15,9 +15,27 @@ CREATE TABLE mgeometry_columns
 	tpseg_size	integer
 );
 
-CREATE TABLE taxi 
+CREATE TABLE userTrajs 
 (
-   carnumber  text,
-   owner text
+	id	integer,
+   	carnumber  text
 );
 
+CREATE TABLE userSensors
+(
+	id	integer,
+	carnumber	text
+);
+
+CREATE TABLE userVideos 
+(
+	id	integer,
+   	name  text
+);
+
+CREATE TABLE city
+(
+	id	integer,
+	name	text,
+	geo	polygon
+);

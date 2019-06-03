@@ -7,9 +7,9 @@ import com.awarematics.postmedia.mgeom.MGeometryFactory;
 import com.awarematics.postmedia.types.mediamodel.MDouble;
 //import org.postgresql.pljava.annotation.Function;
 import com.awarematics.postmedia.types.mediamodel.MGeometry;
+import com.awarematics.postmedia.types.mediamodel.MInt;
 import com.awarematics.postmedia.types.mediamodel.MPoint;
 import com.awarematics.postmedia.types.mediamodel.MVideo;
-import com.awarematics.postmedia.types.mediamodel.Period;
 
 public class TemporalOP {
 
@@ -59,7 +59,6 @@ public class TemporalOP {
 		MWKTReader reader = new MWKTReader(geometryFactory);
 		MGeometry mg1 = (MGeometry) reader.read(mgstring);
 		String from = periodstring.split(", ")[0].replace("Period (", "");
-		String to = periodstring.split(", ")[1].replace(")", "");
 		if (mg1.startTime() <= Long.parseLong(from) && mg1.endTime() >= Long.parseLong(from)) 
 			return true;
 		return false;
@@ -71,7 +70,6 @@ public class TemporalOP {
 		MGeometryFactory geometryFactory = new MGeometryFactory();
 		MWKTReader reader = new MWKTReader(geometryFactory);
 		MGeometry mg1 = (MGeometry) reader.read(mgstring);
-		String from = periodstring.split(", ")[0].replace("Period (", "");
 		String to = periodstring.split(", ")[1].replace(")", "");
 		if (mg1.startTime() <= Long.parseLong(to) && mg1.endTime() >= Long.parseLong(to)) 
 			return true;
@@ -85,7 +83,6 @@ public class TemporalOP {
 		MWKTReader reader = new MWKTReader(geometryFactory);
 		MGeometry mg1 = (MGeometry) reader.read(mgstring);
 		String from = periodstring.split(", ")[0].replace("Period (", "");
-		String to = periodstring.split(", ")[1].replace(")", "");
 		if (mg1.endTime() <= Long.parseLong(from)) 
 			return true;
 		return false;
@@ -97,7 +94,6 @@ public class TemporalOP {
 		MGeometryFactory geometryFactory = new MGeometryFactory();
 		MWKTReader reader = new MWKTReader(geometryFactory);
 		MGeometry mg1 = (MGeometry) reader.read(mgstring);
-		String from = periodstring.split(", ")[0].replace("Period (", "");
 		String to = periodstring.split(", ")[1].replace(")", "");
 		if (mg1.startTime() >= Long.parseLong(to)) 
 			return true;
@@ -119,6 +115,8 @@ public class TemporalOP {
 				return "MPOINT ()";
 			if (mg1 instanceof MDouble)
 				return "MDOUBLE ()";
+			if (mg1 instanceof MInt)
+				return "MINT ()";
 		} else
 			return mg1.slice(Long.parseLong(from), Long.parseLong(to)).toGeoString();
 		return null;

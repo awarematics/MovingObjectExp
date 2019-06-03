@@ -6,6 +6,8 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 
+import com.awarematics.postmedia.mgeom.MGeometryFactory;
+
 public class MInt extends MGeometry {
 	/**
 	 * 
@@ -102,8 +104,43 @@ public class MInt extends MGeometry {
 
 	@Override
 	public MGeometry slice(long fromTime, long toTime) {
-		// TODO Auto-generated method stub
-		return null;
+		MGeometryFactory factory = null;
+		if (times == null)
+			return null;
+
+		if ((toTime < times[0]) || (fromTime > times[times.length - 1]))
+			return null;
+
+		if (fromTime > toTime)
+			return null;
+
+		long overlappedStartTime = Math.max(times[0], fromTime);
+		long overlappedEndTime = Math.min(times[times.length - 1], toTime);
+		factory = new MGeometryFactory();
+		if (times.length == 1) {
+			return factory.createMInt(count, times);
+		}
+		int num = 0;
+		for (int i = 0; i < times.length; i++) {
+			if (times[i] <= overlappedEndTime && times[i] >= overlappedStartTime) {
+				num++;
+			}
+		}
+		if (num == 0)
+			return null;
+
+		int[] coordSli = new int[num];
+		long[] timeSli = new long[num];
+		int value = 0;
+
+		for (int i = 0; i < times.length; i++) {
+			if (times[i] <= overlappedEndTime && times[i] >= overlappedStartTime) {
+				coordSli[value] = count[i];
+				timeSli[value] = times[i];
+				value++;
+			}
+		}
+		return factory.createMInt(coordSli, timeSli);
 	}
 
 	@Override
@@ -167,7 +204,7 @@ public class MInt extends MGeometry {
 	}
 
 	@Override
-	public MGeometry snapToGrid(double cellSize) {
+	public MGeometry snapToGrid(int cellSize) {
 		// TODO Auto-generated method stub
 		return null;
 	}

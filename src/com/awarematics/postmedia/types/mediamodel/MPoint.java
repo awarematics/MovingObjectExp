@@ -1,6 +1,7 @@
 package com.awarematics.postmedia.types.mediamodel;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -365,7 +366,7 @@ public class MPoint extends MGeometry {
 	@Override
 	public long timeAtCummulativeDistance(double distance) {
 		double[] value = new double[numOf()];
-		long time = 0;
+		long time = -1;
 		value[0] = 0;
 		for (int i = 1; i < numOf(); i++) {
 			value[i] = value[i - 1] + calDistance(coords[i], coords[i - 1]);
@@ -383,32 +384,20 @@ public class MPoint extends MGeometry {
 	}
 
 	@Override
-	public MGeometry snapToGrid(double cellSize) {
+	public MGeometry snapToGrid(int cellSize) {
 
 		MGeometryFactory mgeometryFactory = new MGeometryFactory();
 		Coordinate[] coordGrid = new Coordinate[numOf()];
 		long[] timesGrid = times;
-		for (int i = 0; i < numOf(); i++) {
-			double gridDistanceX = coords[i].x % cellSize;
-			double gridDistanceY = coords[i].y % cellSize;
-			if (gridDistanceX <= (cellSize / 2) && gridDistanceY <= (cellSize / 2)) {
+		for(int i=0;i< numOf();i++)
+		{
+			
 				coordGrid[i] = new Coordinate();
-				coordGrid[i].x = coords[i].x - gridDistanceX;
-				coordGrid[i].y = coords[i].y - gridDistanceY;
-			} else if (gridDistanceX > (cellSize / 2) && gridDistanceY > (cellSize / 2)) {
-				coordGrid[i] = new Coordinate();
-				coordGrid[i].x = coords[i].x - gridDistanceX + cellSize;
-				coordGrid[i].y = coords[i].y - gridDistanceY + cellSize;
-			} else if (gridDistanceX <= (cellSize / 2) && gridDistanceY > (cellSize / 2)) {
-				coordGrid[i] = new Coordinate();
-				coordGrid[i].x = coords[i].x - gridDistanceX;
-				coordGrid[i].y = coords[i].y - gridDistanceY + cellSize;
-			} else {
-				coordGrid[i] = new Coordinate();
-				coordGrid[i].x = coords[i].x - gridDistanceX + cellSize;
-				coordGrid[i].y = coords[i].y - gridDistanceY;
-			}
-		}
+				BigDecimal bgx = new BigDecimal(coords[i].x);
+				coordGrid[i].x = bgx.setScale(cellSize, BigDecimal.ROUND_HALF_UP).doubleValue();
+				BigDecimal bgy = new BigDecimal( coords[i].y);
+				coordGrid[i].y = bgy.setScale(cellSize, BigDecimal.ROUND_HALF_UP).doubleValue();
+		}	
 		return mgeometryFactory.createMPoint(coordGrid, timesGrid);
 	}
 
@@ -526,9 +515,42 @@ public class MPoint extends MGeometry {
 
 	@Override
 	public MDouble direction() {
-		return null;
+		MGeometryFactory mgeometryFactory = new MGeometryFactory();
+		double[] direction = new double[numOf()];
+		direction = printDirection(coords);
+		return mgeometryFactory.createMDouble(direction, times);
 	}
+	public static double[] printDirection(Coordinate[] coordsxy) {
+		double[] k = new double[coordsxy.length];
+		double start_x = coordsxy[0].x;
+		double start_y = coordsxy[0].y;
+		
+		double[] result = new double[coordsxy.length];
+		/*
+		 * k[0]  start point maybe is a stop point for several seconds
+		 */
+		int num =0;
+		for(int i=1;i<coordsxy.length;i++){
 
+			if((coordsxy[i].x!=start_x||coordsxy[i].y!=start_y)&& num==0)
+			{
+				k[0] =  Math.asin(coordsxy[i].y-start_y)/Math.sqrt(((coordsxy[i].x -start_x) * (coordsxy[i].x -start_x)) + (coordsxy[i].y - start_y) * (coordsxy[i].y - start_y)); num=1;
+				result[0] = Double.valueOf((k[0]* 180 / Math.PI));
+			}
+		}
+		for (int i = 1; i < coordsxy.length; i++) {
+			if( Math.sqrt(((coordsxy[i].x -coordsxy[i-1].x) * (coordsxy[i].x - coordsxy[i-1].x)) + (coordsxy[i].y - coordsxy[i-1].y) * (coordsxy[i].y- coordsxy[i-1].y))!=0){
+				k[i] = Math.asin(coordsxy[i].y- coordsxy[i-1].y)/ Math.sqrt(((coordsxy[i].x -coordsxy[i-1].x) * (coordsxy[i].x - coordsxy[i-1].x)) + (coordsxy[i].y - coordsxy[i-1].y) * (coordsxy[i].y - coordsxy[i-1].y));
+			}
+			else
+			{
+				k[i]=k[i-1];
+			}
+			//DecimalFormat df = new DecimalFormat("0.000000000");df.format
+			result[i] = Double.valueOf((k[i]* 180 / Math.PI));
+		}
+		return result;
+	}
 	@Override
 	public MInt count() {
 		// TODO Auto-generated method stub

@@ -191,7 +191,7 @@ public class MDouble extends MGeometry  {
 	}
 
 	@Override
-	public MGeometry snapToGrid(double cellSize) {
+	public MGeometry snapToGrid(int cellSize) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -1,5 +1,5 @@
 
-----mgeometry fov  stphoto   mvideo   mphoto   mpolygon    mbool    mpoint   point   mdouble   mduration   mint  minstant  mmultipoint   mstring   mlinestring   mperiod   period
+----  stphoto   mvideo   mphoto   mpolygon    mbool    mpoint   point   mdouble   mduration   mint  minstant  mmultipoint   mstring   mlinestring   mperiod  
 /*
 MPeriod :  MPERIOD ((period), (period), ….)
 MDuration :  MDURATION (duration, duration, duration….)
@@ -16,21 +16,6 @@ MVideo :  MVIDEO ((uri altitude times annotationjson point fov(viewangle vertica
 MPhoto :  MPHOTO ((uri width height altitude times annotationjson point fov(viewangle verticalangle direction direction3d distance)),(uri width height altitude times annotationjson point fov(viewangle verticalangle direction direction3d distance))...)
 */
 
-CREATE TYPE mgeometry AS(
-	mdouble	mdouble,
-	mpoint	mpoint,
-	mvideo	mvideo,
-	mphoto	mphoto,
-	mpolygon	mpolygon,
-	mlinestring mlinestring,
-	mbool	mbool,
-	mduration	mduration,
-	mint	mint,
-	minstant	minstant,
-	mmultipoint	mmultipoint,
-	mstring		mstring,
-	mperiod		mperiod
-);
 
 CREATE TYPE mdouble AS
 (
@@ -50,6 +35,7 @@ CREATE TYPE point AS
 CREATE TYPE mpoint AS
 (
 	id oid,
+	segid  text,
 	coordinates point[],
 	timeline timestamp without time zone[],
 	interpolation json
@@ -58,6 +44,7 @@ CREATE TYPE mpoint AS
 CREATE TYPE mbool AS
 (
 	id oid,
+	segid  text,
 	bools boolean[],
 	timeline timestamp without time zone[],
 	interpolation json
@@ -66,6 +53,7 @@ CREATE TYPE mbool AS
 CREATE TYPE mpolygon AS
 (
 	id oid,
+	segid  text,
 	polygons polygon[],
 	timeline timestamp without time zone[],
 	interpolation json
@@ -74,6 +62,7 @@ CREATE TYPE mpolygon AS
 CREATE TYPE mphoto AS
 (
 	id oid,
+	segid  text,
 	uri text[],
 	width integer[],
 	height integer[],
@@ -81,23 +70,35 @@ CREATE TYPE mphoto AS
 	times timestamp without time zone[],
 	annotations json,
 	points point[],
-	fov FoV[]
+	viewAngle double precision[],
+	verticalAngle double precision[],
+	direction double precision[],
+	distance double precision[],
+	direction3d double precision[]
+	---fov FoV[]
 );
 
 CREATE TYPE mvideo AS
 (
 	id oid,
+	segid  text,
 	uri text[],
 	altitude double precision[],
 	times timestamp without time zone[],
 	annotations json[],
-	points point,
-	fov FoV[]
+	points point[],
+	viewAngle double precision[],
+	verticalAngle double precision[],
+	direction double precision[],
+	distance double precision[],
+	direction3d double precision[]
+	---fov FoV[]
 );
 
 CREATE TYPE stphoto AS
 (
 	id oid,
+	segid  text,
 	uri text,
 	width integer,
 	height integer,
@@ -105,21 +106,18 @@ CREATE TYPE stphoto AS
 	times timestamp without time zone,
 	annotations json,
 	points point,
-	fov FoV
-);
-
-CREATE TYPE FoV AS
-(
 	viewAngle double precision,
 	verticalAngle double precision,
 	direction double precision,
 	distance double precision,
 	direction3d double precision
+	---fov FoV
 );
 
 CREATE TYPE mduration AS
 (
 	id oid,
+	segid  text,
 	duration bigint[],
 	interpolation json
 );
@@ -127,6 +125,7 @@ CREATE TYPE mduration AS
 CREATE TYPE minstant AS
 (
 	id oid,
+	segid  text,
 	instant timestamp without time zone[],
 	interpolation json
 );
@@ -134,6 +133,7 @@ CREATE TYPE minstant AS
 CREATE TYPE mint AS
 (
 	id oid,
+	segid  text,
 	counts integer[],
 	interpolation json
 );
@@ -141,6 +141,7 @@ CREATE TYPE mint AS
 CREATE TYPE mmultipoint AS
 (
 	id oid,
+	segid  text,
 	moints point[],
 	times timestamp without time zone[],
 	interpolation json
@@ -149,6 +150,7 @@ CREATE TYPE mmultipoint AS
 CREATE TYPE mstring AS
 (
 	id oid,
+	segid  text,
 	mstrings text[],
 	times timestamp without time zone[],
 	interpolation json
@@ -157,6 +159,7 @@ CREATE TYPE mstring AS
 CREATE TYPE mlinestring AS
 (
 	id oid,
+	segid  text,
 	mlinestrings text[],
 	times timestamp without time zone[],
 	interpolation json
@@ -165,13 +168,15 @@ CREATE TYPE mlinestring AS
 CREATE TYPE mperiod AS
 (
 	id oid,
-	periods period[],
+	segid  text,
+	fromtime bigint[],
+	totime bigint[],
 	interpolation json
 );
+
 
 CREATE TYPE period AS
 (
 	fromtime bigint,
 	totime bigint
 );
-

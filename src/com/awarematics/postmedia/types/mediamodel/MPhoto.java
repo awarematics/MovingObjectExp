@@ -1,5 +1,6 @@
 package com.awarematics.postmedia.types.mediamodel;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -726,7 +727,7 @@ public class MPhoto extends MGeometry {
 	@Override
 	public long timeAtCummulativeDistance(double distance) {
 		double[] value = new double[numOf()];
-		long time = 0;
+		long time = -1;
 		value[0] = 0;
 		for (int i = 1; i < numOf(); i++) {
 			value[i] = value[i - 1] + calDistance(coords[i], coords[i - 1]);
@@ -741,7 +742,7 @@ public class MPhoto extends MGeometry {
 		return time;
 	}
 	@Override
-	public MGeometry snapToGrid(double cellSize) {
+	public MGeometry snapToGrid(int cellSize) {
 		
 		MGeometryFactory mgeometryFactory = new MGeometryFactory();
 		String[] uriGrid = uri;
@@ -761,30 +762,12 @@ public class MPhoto extends MGeometry {
 		long[] timesGrid = creationTime;
 		for(int i=0;i< numOf();i++)
 		{
-			double gridDistanceX= coords[i].x % cellSize;
-			double gridDistanceY= coords[i].y % cellSize;
-			System.out.println(gridDistanceY);
-			if(gridDistanceX<=(cellSize/2) && gridDistanceY <=(cellSize/2)){
+			
 				coordGrid[i] = new Coordinate();
-				coordGrid[i].x =  coords[i].x - gridDistanceX;
-				coordGrid[i].y =  coords[i].y - gridDistanceY;
-			}	
-			else if(gridDistanceX >(cellSize/2) && gridDistanceY >(cellSize/2)){
-				coordGrid[i] = new Coordinate();
-				coordGrid[i].x =  coords[i].x - gridDistanceX + cellSize;
-				coordGrid[i].y =  coords[i].y - gridDistanceY + cellSize;
-			}
-			else if(gridDistanceX<=(cellSize/2) && gridDistanceY > (cellSize/2)){
-				coordGrid[i] = new Coordinate();
-				coordGrid[i].x =  coords[i].x - gridDistanceX;
-				coordGrid[i].y =  coords[i].y - gridDistanceY + cellSize;
-			}
-			else
-			{
-				coordGrid[i] = new Coordinate();
-				coordGrid[i].x =  coords[i].x - gridDistanceX + cellSize;
-				coordGrid[i].y =  coords[i].y - gridDistanceY;
-			}
+				BigDecimal bgx = new BigDecimal(coords[i].x);
+				coordGrid[i].x = bgx.setScale(cellSize, BigDecimal.ROUND_HALF_UP).doubleValue();
+				BigDecimal bgy = new BigDecimal( coords[i].y);
+				coordGrid[i].y = bgy.setScale(cellSize, BigDecimal.ROUND_HALF_UP).doubleValue();
 		}	
 		return mgeometryFactory.createMPhoto(uriGrid, widthGrid, heightGrid,viewAngleGrid,verticalAngleGrid, distanceGrid, directionGrid,direction3dGrid, altitudeGrid,annotationJsonGrid,exifJsonGrid,coordGrid, timesGrid, listPolygonGrid, fovGrid );
 	}

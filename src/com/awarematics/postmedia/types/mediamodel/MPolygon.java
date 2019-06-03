@@ -387,50 +387,9 @@ public class MPolygon extends MGeometry {
 	}
 
 	@Override
-	public MGeometry snapToGrid(double cellSize) {
-		MGeometryFactory mgeometryFactory = new MGeometryFactory();
-		GeometryFactory geometryFactory = new GeometryFactory();
-		Polygon[] pol = new Polygon[numOf()];
-		long[] timesGrid = times;
-		for (int i = 0; i < numOf(); i++) {
-			Coordinate[] coordGrid = new Coordinate[listPolygon[i].getNumPoints()];
-			double gridDistanceX = listPolygon[i].getCoordinate().x % cellSize;
-			double gridDistanceY = listPolygon[i].getCoordinate().y % cellSize;
-			if (gridDistanceX <= (cellSize / 2) && gridDistanceY <= (cellSize / 2)) {	
-				for(int j =0;j< listPolygon[i].getNumPoints();j++)
-				{
-					coordGrid[j] = new Coordinate();
-					coordGrid[j].x = listPolygon[i].getCoordinates()[j].x - gridDistanceX;
-					coordGrid[j].y = listPolygon[i].getCoordinates()[j].y - gridDistanceY;
-				}
-				pol[i] = geometryFactory.createPolygon(coordGrid);		
-			} else if (gridDistanceX > (cellSize / 2) && gridDistanceY > (cellSize / 2)) {
-				for(int j =0;j< listPolygon[i].getNumPoints();j++)
-				{
-					coordGrid[j] = new Coordinate();
-					coordGrid[j].x = listPolygon[i].getCoordinates()[j].x - gridDistanceX+ cellSize;
-					coordGrid[j].y = listPolygon[i].getCoordinates()[j].y - gridDistanceY+ cellSize;
-				}
-				pol[i] = geometryFactory.createPolygon(coordGrid);	
-			} else if (gridDistanceX <= (cellSize / 2) && gridDistanceY > (cellSize / 2)) {
-				for(int j =0;j< listPolygon[i].getNumPoints();j++)
-				{
-					coordGrid[j] = new Coordinate();
-					coordGrid[j].x = listPolygon[i].getCoordinates()[j].x - gridDistanceX;
-					coordGrid[j].y = listPolygon[i].getCoordinates()[j].y - gridDistanceY+ cellSize;
-				}
-				pol[i] = geometryFactory.createPolygon(coordGrid);	
-			} else {
-				for(int j =0;j< listPolygon[i].getNumPoints();j++)
-				{
-					coordGrid[j] = new Coordinate();
-					coordGrid[j].x = listPolygon[i].getCoordinates()[j].x - gridDistanceX+ cellSize;
-					coordGrid[j].y = listPolygon[i].getCoordinates()[j].y - gridDistanceY;
-				}
-				pol[i] = geometryFactory.createPolygon(coordGrid);	
-			}
-		}
-		return mgeometryFactory.createMPolygon(pol, timesGrid);
+	public MGeometry snapToGrid(int cellSize) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

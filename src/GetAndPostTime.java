@@ -323,7 +323,7 @@ System.out.println(mg2.toString());
 								+ mg.timeAtCummulativeDistance(ts) + "#";
 					}
 					if (function.equals("M_SnapToGrid")) {
-						double ts = Double.parseDouble(parameter.split("@")[0]);
+						int ts = Integer.valueOf(parameter.split("@")[0]);
 						outputString = outputString + function + "@" + sss[i].replace("\"", "") + "@" + type + "@"
 								+ mg.snapToGrid(ts) + "#";
 					}
@@ -501,20 +501,7 @@ System.out.println(mg2.toString());
 				}
 				
 				if (function.equals("MGeometry_Intersects_Input")) {
-					if(mg2 instanceof Point || mg2 instanceof Polygon || mg2 instanceof LineString){
-						if (MGeometry.intersects(mg1, (Geometry)mg2) == null) {
-							// String similar=MGeometry.intersects(
-							// mglist.get(i), mglist.get(j)).toGeoString();
-							outputString = outputString + function + "@" + sss[3].replace("\"", "") + "@" + type
-									+ "@" + "No Common Time In This Time_Series!" + "#";
-						} else {
-							String similar = MGeometry.intersects(mg1, (Geometry)mg2).toGeoString();
-							outputString = outputString + function + "@" + sss[ 3].replace("\"", "") + ":"
-									+ sss[4].replace("\"", "") + "@" + type + "@" + similar + "#";
-						}
-						
-					}
-					else{
+					
 							if (MGeometry.intersects(mg1, (MGeometry)mg2) == null) {
 								// String similar=MGeometry.intersects(
 								// mglist.get(i), mglist.get(j)).toGeoString();
@@ -525,24 +512,11 @@ System.out.println(mg2.toString());
 								outputString = outputString + function + "@" + sss[ 3].replace("\"", "") + ":"
 										+ sss[4].replace("\"", "") + "@" + type + "@" + similar + "#";
 							}
-					}
+					
 					
 				}
 				if (function.equals("Secondo_Intersects_Input")) {
-					if(mg2 instanceof Point || mg2 instanceof Polygon || mg2 instanceof LineString){
-						if (MGeometry.intersects(mg1, (Geometry)mg2) == null) {
-							// String similar=MGeometry.intersects(
-							// mglist.get(i), mglist.get(j)).toGeoString();
-							outputString = outputString + function + "@" + sss[3].replace("\"", "") + "@" + type
-									+ "@" + "No Common Time In This Time_Series!" + "#";
-						} else {
-							String similar = MGeometry.intersects(mg1, (Geometry)mg2).toGeoString();
-							outputString = outputString + function + "@" + sss[ 3].replace("\"", "") + ":"
-									+ sss[4].replace("\"", "") + "@" + type + "@" + similar + "#";
-						}
-						
-					}
-					else{
+					
 							if (MGeometry.intersects(mg1, (MGeometry)mg2) == null) {
 								// String similar=MGeometry.intersects(
 								// mglist.get(i), mglist.get(j)).toGeoString();
@@ -553,7 +527,7 @@ System.out.println(mg2.toString());
 								outputString = outputString + function + "@" + sss[ 3].replace("\"", "") + ":"
 										+ sss[4].replace("\"", "") + "@" + type + "@" + similar + "#";
 							}
-					}
+					
 					
 				}
 

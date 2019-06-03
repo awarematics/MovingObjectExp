@@ -1,5 +1,6 @@
 package com.awarematics.postmedia.types.mediamodel;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -666,12 +667,14 @@ public class MVideo extends MGeometry {
 	@Override
 	public long timeAtCummulativeDistance(double distance) {
 		double[] value = new double[numOf()];
-		long time = 0;
+		//System.out.println(distance);
+		long time = -1;
 		value[0] = 0;
 		for (int i = 1; i < numOf(); i++) {
 			value[i] = value[i - 1] + calDistance(coords[i], coords[i - 1]);
 		}
 		for (int i = 1; i < numOf(); i++) {
+			//System.out.println(value[i]);
 			if (distance >= value[i - 1] && distance < value[i]) {
 				double leftpart = distance - value[i - 1];
 				double total = value[i] - value[i - 1];
@@ -681,8 +684,8 @@ public class MVideo extends MGeometry {
 		return time;
 	}
 
-	@Override
-	public MGeometry snapToGrid(double cellSize) {
+	//@Override
+	public MGeometry snapToGrid(int cellSize) {
 		MGeometryFactory mgeometryFactory = new MGeometryFactory();
 		String[] uriGrid = uri;
 		double[] viewAngleGrid =viewAngle;
@@ -697,32 +700,15 @@ public class MVideo extends MGeometry {
 		FoV[] fovGrid = fov;
 		Coordinate[] coordGrid = new Coordinate[numOf()];
 		long[] timesGrid = creationTime;
+		
 		for(int i=0;i< numOf();i++)
 		{
-			double gridDistanceX= coords[i].x % cellSize;
-			double gridDistanceY= coords[i].y % cellSize;
-			System.out.println(gridDistanceY);
-			if(gridDistanceX<=(cellSize/2) && gridDistanceY <=(cellSize/2)){
+			
 				coordGrid[i] = new Coordinate();
-				coordGrid[i].x =  coords[i].x - gridDistanceX;
-				coordGrid[i].y =  coords[i].y - gridDistanceY;
-			}	
-			else if(gridDistanceX >(cellSize/2) && gridDistanceY >(cellSize/2)){
-				coordGrid[i] = new Coordinate();
-				coordGrid[i].x =  coords[i].x - gridDistanceX + cellSize;
-				coordGrid[i].y =  coords[i].y - gridDistanceY + cellSize;
-			}
-			else if(gridDistanceX<=(cellSize/2) && gridDistanceY > (cellSize/2)){
-				coordGrid[i] = new Coordinate();
-				coordGrid[i].x =  coords[i].x - gridDistanceX;
-				coordGrid[i].y =  coords[i].y - gridDistanceY + cellSize;
-			}
-			else
-			{
-				coordGrid[i] = new Coordinate();
-				coordGrid[i].x =  coords[i].x - gridDistanceX + cellSize;
-				coordGrid[i].y =  coords[i].y - gridDistanceY;
-			}
+				BigDecimal bgx = new BigDecimal(coords[i].x);
+				coordGrid[i].x = bgx.setScale(cellSize, BigDecimal.ROUND_HALF_UP).doubleValue();
+				BigDecimal bgy = new BigDecimal( coords[i].y);
+				coordGrid[i].y = bgy.setScale(cellSize, BigDecimal.ROUND_HALF_UP).doubleValue();
 		}	
 		return mgeometryFactory.createMVideo(uriGrid,viewAngleGrid,verticalAngleGrid, distanceGrid, directionGrid,direction3dGrid, altitudeGrid,annotationJsonGrid,exifJsonGrid,coordGrid, timesGrid, listPolygonGrid, fovGrid );
 	
@@ -852,4 +838,5 @@ public class MVideo extends MGeometry {
 		
 		return mgeometryFactory.createMDouble(veolocity, creationTime);
 	}
+
 }

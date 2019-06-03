@@ -70,6 +70,38 @@ public class ColumnsProjection {
 		}
 		return result;
 	}
+	
+//	@Function
+	public static String MBoolBool(String toWhom) {
+		toWhom = toWhom.replace("MBOOL ", "");
+		toWhom = toWhom.replaceAll("\\(|\\)", "");
+		String result = "";		
+		String[] split1 = toWhom.split(", ");
+		for (int i = 0; i < split1.length; i++) {
+			String temp = split1[i].split(" ")[0];
+			if (i == 0)
+				result = result  + temp ;
+			else
+				result = result + ";"  + temp ;
+		}
+		return result;
+	}
+
+//	@Function
+	public static String MBoolTime(String toWhom) {
+		toWhom = toWhom.replace("MBOOL (", "");
+		String result = "";
+		String[] split1 = toWhom.split(", ");
+		for (int i = 0; i < split1.length; i++) {
+			if (i == 0)
+				result = result + "'{" + LongToString(Long.parseLong(split1[i].split(" ")[1].replaceAll("\\)", "")))
+						+ "}'";
+			else
+				result = result + ", '{" + LongToString(Long.parseLong(split1[i].split(" ")[1].replaceAll("\\)", "")))
+						+ "}'";
+		}
+		return result;
+	}
 
 //	@Function
 	public static String MVideoPoint(String toWhom) {

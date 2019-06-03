@@ -1,7 +1,12 @@
 package com.awarematics.postmedia.test;
 import java.io.IOException;
 
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 
 import com.awarematics.postmedia.io.MWKTReader;
 import com.awarematics.postmedia.mgeom.MGeometryFactory;
@@ -21,7 +26,7 @@ public class RelationshipTest {
 		//MVideo mv = (MVideo)reader.read("MVIDEO (('localhost:///tmp/drone/test1.jpg' 200 200 60 0 0.1 30 0 0 'annotation' 'exif' 0 0) 1481480632123, ('localhost:///tmp/drone/test1.jpg' 200 200 60 0 0.1 30 0 0 'annotation' 'exif' 1 1) 1481480634123), ('localhost:///tmp/drone/test1.jpg' 200 200 60 0 0.1 30 0 0 'annotation' 'exif' 101.99 62.9) 1481480644123)");
 		//MVideo mv2 = (MVideo)reader.read("MVIDEO (('localhost:///tmp/drone/test1.jpg' 200 200 60 0 0.1 30 0 0 'annotation' 'exif' -0.0001 -0.0001) 1481480632123, ('localhost:///tmp/drone/test1.jpg' 200 200 60 0 0.1 30 0 0 'annotation' 'exif' 0.99 0.99) 1481480634123), ('localhost:///tmp/drone/test1.jpg' 200 200 60 0 0.1 30 0 0 'annotation' 'exif' 102 63) 1481480644123)");
 		//MPoint mp3 = (MPoint)reader.read("MPOINT ((0 0) 1581480632123, (0 2) 1581480638000)");
-		System.out.println(mp.atomize(1000).toGeoString());
+		//System.out.println(mp.atomize(1000).toGeoString());
 		//MPolygon mpl = (MPolygon) reader.read("MPOLYGON ((0 0, 1 1, 1 0, 0 0) 1000)");
 	//	System.out.println(mpl.toGeoString());
 		
@@ -86,18 +91,21 @@ public class RelationshipTest {
 		//System.out.println(mool2.toGeoString());
 
 		//System.out.println("---------------------------");
-		/*GeometryFactory geometryFactor = new GeometryFactory();
+		GeometryFactory geometryFactor = new GeometryFactory();
 		WKTReader readers = new WKTReader(geometryFactor);
-	        LineString geometry1 = (LineString) readers.read("LINESTRING(-1 0, 0 0, 0 0.5, 5 5)");
-	        LineString geometry2 = (LineString) readers.read("LINESTRING(-2 -2, 0 0, -1 0, -2 -5)"); 
-	        LineString geometry5 = (LineString) readers.read("LINESTRING(0 0, -1 0)"); 
-	        LineString geometry7 = (LineString) readers.read("LINESTRING(0 0, 0.25 0.25)");
+	     
 	        Point p = (Point) readers.read("POINT (0 0)");
 	        Point p2 = (Point) readers.read("POINT (0.25 0.15)");
-	        Polygon geometry3 = (Polygon) readers.read("POLYGON ((0 0, 0 1, 1 1, 1 0, 0 0))"); Polygon geometry6 = (Polygon) readers.read("POLYGON ((0 0, 0 1, 1 1, 0 0))");
-	        Polygon geometry4 = (Polygon) readers.read("POLYGON ((0.25 0.25, 0.25 0.75, 0.75 0.75, 0.25 0.25))");
-	    
-	        System.out.println(geometry4.intersects(geometry3));*/
+	        Polygon geometry3 = (Polygon) readers.read("POLYGON ((0 0, 0 1, 1 1, 1 0, 0 0))"); 
+	        LineString line = (LineString) readers.read("LINESTRING (0 0, 0.5 0.5, 0.5 0.75)");
+	        LineString line2 = (LineString) readers.read("LINESTRING (0 0, 0.5 0.5, 0 2)");
+	        LineString line3 = (LineString) readers.read("LINESTRING (0 0, 0 1, 0 2)");
+	        System.out.println(line.overlaps(geometry3));
+	        System.out.println(line2.overlaps(geometry3));
+	        System.out.println(line2.crosses(geometry3));
+	        System.out.println(line3.overlaps(geometry3));
+	        System.out.println(line3.touches(geometry3));
+	      //  System.out.println(p2.within(geometry3));
 	     /*   //线和线存在
 	        System.out.println(geometry1.overlaps(geometry2));//ture
 	       //多边形存在

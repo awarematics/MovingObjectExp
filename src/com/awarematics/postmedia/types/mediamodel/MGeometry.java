@@ -55,18 +55,18 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 	public abstract Polygon[] getListPolygon();
 
 	public abstract Coordinate[] getCoords();
-	
+
 	public abstract double veolocityAtTimeTime(long instant);
-	
+
 	public abstract double accelerationAtTimeTime(long instant);
 
 	public abstract MDouble timeToDistance();
-	
+
 	public abstract ArrayList<Long> timeAtDistance(double distance);
-	
+
 	public abstract long timeAtCummulativeDistance(double distance);
 
-	public abstract MGeometry snapToGrid(double cellSize);
+	public abstract MGeometry snapToGrid(int cellSize);
 
 	public abstract Geometry bbox();
 
@@ -79,17 +79,19 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 	public abstract long startTime();
 
 	public abstract long endTime();
-	
+
 	public abstract MDouble area();
-	
+
 	public abstract MDouble direction();
-	
+
 	public abstract MInt count();
-	
+
 	public abstract MDouble velocity();
+
 	public static MBool equal(MGeometry mg1, MGeometry mg2) {
 		MGeometryFactory mgeom = new MGeometryFactory();
 		MBool mbools = intersects(mg1, mg2);
+		if(mbools.numOf()>0){
 		MBool mbool2 = meet(mg1, mg2);
 		boolean[] bools = new boolean[mbools.numOf()];
 		long[] times = mbools.getTimes();
@@ -104,12 +106,15 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 				bools[i] = false;
 			}
 		}
-		return mgeom.createMBool(bools, times);
+		
+		return mgeom.createMBool(bools, times);}
+		return null;
 	}
 
 	public static MBool meet(MGeometry mg1, MGeometry mg2) {
 		MGeometryFactory mgeom = new MGeometryFactory();
 		MBool mbools = intersects(mg1, mg2);
+		if(mbools.numOf()>0){
 		boolean[] bools = mbools.getBools();
 		boolean[] boolsresult = new boolean[mbools.numOf()];
 		long[] times = mbools.getTimes();
@@ -120,197 +125,98 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 			else
 				boolsresult[i] = bools[i];
 		}
-		boolsresult[0] = bools[0]; boolsresult[times.length-1] = bools[times.length-1];
-		return mgeom.createMBool(boolsresult, times);
+		boolsresult[0] = bools[0];
+		boolsresult[times.length - 1] = bools[times.length - 1];
+		return mgeom.createMBool(boolsresult, times);}
+		return null;
 	}
 
 	public static MBool intersects(MGeometry mg1, MGeometry mg2) {
 		ArrayList<Long> timeList = new ArrayList<Long>();
-		ArrayList<Long> timeEventList = new ArrayList<Long>();
 		MGeometryFactory mgeom = new MGeometryFactory();
-		for (int i = 0; i < mg1.numOf(); i++) {
-			timeList.add(mg1.getTimes()[i]);
-		}
-		for (int i = 0; i < mg2.numOf(); i++) {
-			timeList.add(mg2.getTimes()[i]);
-		}
-		
-		if(eventTime(mg1, mg2).getInstant()!=null){
-		long[] ms = eventTime(mg1, mg2).getInstant();
-		for (int i = 0; i < ms.length; i++) {
-			timeList.add(ms[i]);
-			timeEventList.add(ms[i]);
-		}}
-		LinkedHashSet<Long> set = new LinkedHashSet<Long>(timeList.size());
-		set.addAll(timeList);
-		timeList.clear();
-		timeList.addAll(set);
-		long[] tempList = new long[timeList.size()];
-		for(int i=0;i<timeList.size();i++)
-			tempList[i] = timeList.get(i);	
-		long[] tempNoEventList = new long[timeEventList.size()];
-		for(int i=0;i<timeEventList.size();i++)
-			tempNoEventList[i] = timeEventList.get(i);	
-		//long[] tempList = timeList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
-		//long[] tempNoEventList = timeEventList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
-		Arrays.sort(tempList);
-		Arrays.sort(tempNoEventList);
-		boolean[] bools = new boolean[timeList.size()];
 
-		for (int i = 0; i < tempList.length; i++) {
-			int num = 0;
-			for (int j = 0; j < tempNoEventList.length; j++) {
-				if (tempList[i] == tempNoEventList[j])
-					num = 1;
+		if (eventTime(mg1, mg2).getInstant() != null) {
+			long[] ms = eventTime(mg1, mg2).getInstant();
+			for (int i = 0; i < ms.length; i++) {
+				timeList.add(ms[i]);
 			}
-			if (num == 1)
-				bools[i] = true;
-			else
-				bools[i] = false;
+			
+			long[] tempList = new long[timeList.size()];
+			for (int i = 0; i < timeList.size(); i++)
+				tempList[i] = timeList.get(i);
+			boolean[] bools = new boolean[timeList.size()];
+			for(int i=0;i< tempList.length;i++)
+			{
+				if(mg1.snapshot(tempList[i]).intersects(mg2.snapshot(tempList[i]))){
+					bools[i] = true;
+				}
+			}
+			return mgeom.createMBool(bools, tempList);
 		}
+	
+		long[] tempList = mg1.getTimes();
+		boolean[] bools = new boolean[tempList.length];
+		for(int i =0;i< tempList.length;i++)
+			bools[i] = false;
+
 		return mgeom.createMBool(bools, tempList);
 	}
 
-	
-	public static MBool intersects(MGeometry mg1, Geometry mg2) {
-		ArrayList<Long> timeList = new ArrayList<Long>();
-		MGeometryFactory mgeom = new MGeometryFactory();
-		for (int i = 0; i < mg1.numOf(); i++) {
-			timeList.add(mg1.getTimes()[i]);
-		}
-		long[] tempList = new long[timeList.size()];
-		for(int i=0;i<timeList.size();i++)
-			tempList[i] = timeList.get(i);		
-		//long[] tempList = timeList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
-		
-		boolean[] bools = new boolean[timeList.size()];
-
-		for (int i = 0; i < tempList.length; i++) {
-			if (mg1 instanceof MPoint){
-				@SuppressWarnings("deprecation")
-				Point p = new Point(mg1.getCoords()[i], null, 0);
-				if(p.intersects(mg2))
-					bools[i] = true;
-				else
-					bools[i] = false;
-			}
-			if (mg1 instanceof MPolygon){
-				if(mg1.getListPolygon()[i].intersects(mg2))
-					bools[i] = true;
-				else
-					bools[i] = false;
-			}
-			if (mg1 instanceof MLineString){
-				if(((MLineString) mg1).getPoints()[i].intersects(mg2))
-					bools[i] = true;
-				else
-					bools[i] = false;
-			}
-		}
-		return mgeom.createMBool(bools, tempList);
-	}
-	
 	public static MBool disjoint(MGeometry mg1, MGeometry mg2) {
 
 		MGeometryFactory mgeom = new MGeometryFactory();
 		MBool mbools = intersects(mg1, mg2);
-		boolean[] bools = mbools.getBools();
-		boolean[] boolsresult = new boolean[bools.length];
-		long[] times = mbools.getTimes();
-
+		boolean[] bools = new boolean[mg1.numOf()];
+		long[] times = mg1.getTimes();
+		for(int i =0;i< bools.length;i++)
+			bools[i] = true;
+		if(mbools.numOf()>0)
+		{
 		for (int i = 0; i < times.length; i++) {
-			if (bools[i] == true)
-				boolsresult[i] = false;
-			if (bools[i] == false)
-				boolsresult[i] = true;
+			for(int j =0;j< mbools.numOf();j++)
+			{
+				if (times[i] == mbools.getTimes()[j])
+					bools[i] = false;
+			}
 		}
-		return mgeom.createMBool(boolsresult, times);
+		}
+		return mgeom.createMBool(bools, times);
 	}
 
 	public static MInstant eventTime(MGeometry mg1, MGeometry mg2) {
 		MGeometryFactory mgeom = new MGeometryFactory();
-		GeometryFactory geom = new GeometryFactory();
 		long overlappedStartTime = Math.max(mg1.getTimes()[0], mg2.getTimes()[0]);
 		long overlappedEndTime = Math.min(mg1.getTimes()[mg1.numOf() - 1], mg2.getTimes()[mg2.numOf() - 1]);
-		if(overlappedStartTime>overlappedEndTime){
-			return mgeom.createMInstant(null);
-		}
-		else{
-		long[] timeArea = new long[] { overlappedStartTime, overlappedEndTime };		
-		ArrayList<Long> timeList = getTimeList(mg1, mg2, timeArea);		
-		LinkedHashSet<Long> set = new LinkedHashSet<Long>(timeList.size());
-		set.addAll(timeList);
-		timeList.clear();
-		timeList.addAll(set);
-		long[] tempList = new long[timeList.size()];
-		for(int i=0;i<timeList.size();i++)
-			tempList[i] = timeList.get(i);	
-		//long[] tempList = timeList.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
-		Arrays.sort(tempList);
-		//System.out.println(tempList.length);
-		ArrayList<Long> result = new ArrayList<Long>();
-		Coordinate[] coor1 = new Coordinate[timeList.size()];
-		Coordinate[] coor2 = new Coordinate[timeList.size()];
-		for (int i = 0; i < tempList.length; i++) {
-			Geometry p1 = mg1.snapshot(tempList[i]);
-			Geometry p2 = mg2.snapshot(tempList[i]);
-			coor1[i] = p1.getCoordinate();
-			coor2[i] = p2.getCoordinate();
-		}
-		LineString g1 = geom.createLineString(coor1);
-		LineString g2 = geom.createLineString(coor2);
-		getInstantList(g1, g2, mg1, mg2, tempList, result);
+		long[] timeArea = new long[] { overlappedStartTime, overlappedEndTime };
 
-		if ((mg1 instanceof MPolygon || mg1 instanceof MVideo || mg1 instanceof MPhoto)
-				&& (mg2 instanceof MPolygon || mg2 instanceof MVideo || mg2 instanceof MPhoto)) {
-			for (int i = 0; i < mg1.getTimes().length; i++) {
-				if (mg1.getTimes()[i] >= timeArea[0] && mg1.getTimes()[i] <= timeArea[1]) {
-					if (mg1.getListPolygon()[i].intersects(mg2.snapshot(mg1.getTimes()[i]))) {
-						result.add(mg1.getTimes()[i]);
-					}
+		ArrayList<Long> timeList = getTimeList(mg1, mg2, timeArea);
+		LineString line1 = MGeometryToGeometry(mg1, timeArea);
+		LineString line2 = MGeometryToGeometry(mg2, timeArea);
+		if (mg1 instanceof MPoint) {
+			long[] eve = eventTime(line1, line2, (MPoint) mg1, timeList);
+			return mgeom.createMInstant(eve);
+		}
+		else {
+			ArrayList<Long> nowTime = new ArrayList<Long>();
+			ArrayList<Coordinate> coords = new ArrayList<Coordinate>();
+			for (int i = 0; i < mg1.numOf(); i++) {
+				if (mg1.getTimes()[i] > timeArea[0] || mg1.getTimes()[i] <= timeArea[1]) {
+					nowTime.add(mg1.getTimes()[i]);
+					coords.add(mg1.getCoords()[i]);
 				}
 			}
-			for (int i = 0; i < mg2.getTimes().length; i++) {
-				if (mg2.getTimes()[i] >= timeArea[0] && mg2.getTimes()[i] <= timeArea[1]) {
-					if (mg2.getListPolygon()[i].intersects(mg1.snapshot(mg2.getTimes()[i]))) {
-						result.add(mg2.getTimes()[i]);
-					}
-				}
+			Coordinate[] coordinates = new Coordinate[coords.size()];
+			for (int i = 0; i < nowTime.size(); i++) {
+				coordinates[i] = coords.get(i);
 			}
+			long[] tempList = new long[nowTime.size()];
+			for (int i = 0; i < nowTime.size(); i++)
+				tempList[i] = nowTime.get(i);
+			// long[] tempList = nowTime.stream().mapToLong(i -> i).toArray();
+			MPoint mp = new MPoint(coordinates, tempList);
+			long[] eve = eventTime(line1, line2, mp, timeList);
+			return mgeom.createMInstant(eve);
 		}
-		if ((mg1 instanceof MPolygon || mg1 instanceof MVideo || mg1 instanceof MPhoto)
-				&& (mg2 instanceof MPoint || mg2 instanceof MLineString)) {
-
-			for (int i = 0; i < mg1.getTimes().length; i++) {
-				if (mg1.getTimes()[i] >= timeArea[0] && mg1.getTimes()[i] <= timeArea[1]) {
-					if (mg1.getListPolygon()[i].intersects(mg2.snapshot(mg1.getTimes()[i]))) {
-						result.add(mg1.getTimes()[i]);
-					}
-				}
-			}
-		}
-		if ((mg1 instanceof MPoint || mg1 instanceof MLineString)
-				&& (mg2 instanceof MPolygon || mg2 instanceof MVideo || mg2 instanceof MPhoto)) {
-
-			for (int i = 0; i < mg2.getTimes().length; i++) {
-				if (mg2.getTimes()[i] >= timeArea[0] && mg2.getTimes()[i] <= timeArea[1]) {
-					if (mg2.getListPolygon()[i].intersects(mg1.snapshot(mg2.getTimes()[i]))) {
-						result.add(mg2.getTimes()[i]);
-					}
-				}
-			}
-		}
-
-		LinkedHashSet<Long> sest = new LinkedHashSet<Long>(result.size());
-		sest.addAll(result);
-		result.clear();
-		result.addAll(sest);
-		long[] resultList = new long[result.size()];
-		for(int i=0;i<result.size();i++)
-			resultList[i] = result.get(i);	
-		//long[] resultList = result.stream().filter(i -> i != null).mapToLong(i -> i).toArray();
-		Arrays.sort(resultList);
-		return mgeom.createMInstant(resultList);}
 	}
 
 	public static void getInstantList(LineString g1, LineString g2, MGeometry mg1, MGeometry mg2, long[] tempList,
@@ -329,9 +235,9 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 									+ tempList[ii - 1]);
 
 							if (calDistance(mg2.snapshot(newTime).getCoordinate(),
-									mg1.snapshot(newTime).getCoordinate()) < 0.001 && newTime!=0)
+									mg1.snapshot(newTime).getCoordinate()) < 0.001 && newTime != 0)
 								result.add(newTime);
-							
+
 						}
 					}
 				}
@@ -351,7 +257,7 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 		MBool mbool5 = inside(mg1, mg2);
 		MBool mbool6 = contains(mg1, mg2);
 		MBool mbool7 = overlaps(mg1, mg2);
-		
+
 		String[] string = new String[mbools.numOf()];
 		for (int i = 0; i < mbools.numOf(); i++) {
 			if (mbool2.getBools()[i] == true)
@@ -364,9 +270,9 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 				string[i] = "inside";
 			else if (mbool6.getBools()[i] == true)
 				string[i] = "contains";
-			else if(mbool7.getBools()[i] == true)
+			else if (mbool7.getBools()[i] == true)
 				string[i] = "overlaps";
-			else if(mbools.getBools()[i] == true)
+			else if (mbools.getBools()[i] == true)
 				string[i] = "intersect";
 			else
 				string[i] = "disjoint";
@@ -374,39 +280,43 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 		long[] times = mbools.getTimes();
 		MString ms = mgeom.createMString(string, times);
 		return ms;
+		
 	}
 
 	public static MBool overlaps(MGeometry mg1, MGeometry mg2) {
 		MGeometryFactory mgeom = new MGeometryFactory();
 		long[] times = null;
 		boolean[] bools = null;
+		
+		MBool mbools = intersects(mg1, mg2);
+		if(mbools.numOf()>0){
+		MBool mbool2 = meet(mg1, mg2);
+		bools = new boolean[mbools.numOf()];
+		times = mbools.getTimes();
 
-			MBool mbools = intersects(mg1, mg2);
-			MBool mbool2 = meet(mg1, mg2);
-			bools = new boolean[mbools.numOf()];
-			times = mbools.getTimes();
+		for (int i = 0; i < times.length; i++) {
+			if (times[i] >= mg1.getTimes()[0] && times[i] >= mg2.getTimes()[0]
+					&& times[i] <= mg1.getTimes()[mg1.numOf() - 1] && times[i] <= mg2.getTimes()[mg2.numOf() - 1]) {
+				if (mg1.snapshot(times[i]).overlaps(mg2.snapshot(times[i])) && mbool2.bools[i] != true) {
+					bools[i] = true;
 
-			for (int i = 0; i < times.length; i++) {
-				if (times[i] >= mg1.getTimes()[0] && times[i] >= mg2.getTimes()[0]
-						&& times[i] <= mg1.getTimes()[mg1.numOf() - 1] && times[i] <= mg2.getTimes()[mg2.numOf() - 1]) {
-					if (mg1.snapshot(times[i]).overlaps(mg2.snapshot(times[i])) && mbool2.bools[i] != true) {
-						bools[i] = true;
-
-					}
-				} else {
-					bools[i] = false;
 				}
+			} else {
+				bools[i] = false;
 			}
+		}
 
-		return mgeom.createMBool(bools, times);
+		return mgeom.createMBool(bools, times);}
+		return null;
 	}
 
 	public static MBool inside(MGeometry mg1, MGeometry mg2) {
 		MGeometryFactory mgeom = new MGeometryFactory();
 		long[] times = null;
 		boolean[] bools = null;
-
+		
 		MBool mbools = intersects(mg1, mg2);
+		if(mbools.numOf()>0){
 		MBool mbool2 = meet(mg1, mg2);
 		bools = new boolean[mbools.numOf()];
 		times = mbools.getTimes();
@@ -421,7 +331,8 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 				bools[i] = false;
 			}
 		}
-		return mgeom.createMBool(bools, times);
+		return mgeom.createMBool(bools, times);}
+		return null;
 
 	}
 
@@ -429,8 +340,9 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 		MGeometryFactory mgeom = new MGeometryFactory();
 		long[] times = null;
 		boolean[] bools = null;
-
+		
 		MBool mbools = intersects(mg1, mg2);
+		if(mbools.numOf()>0){
 		MBool mbool2 = meet(mg1, mg2);
 		bools = new boolean[mbools.numOf()];
 		times = mbools.getTimes();
@@ -445,7 +357,8 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 				bools[i] = false;
 			}
 		}
-		return mgeom.createMBool(bools, times);
+		return mgeom.createMBool(bools, times);}
+		return null;
 
 	}
 
@@ -465,37 +378,146 @@ public abstract class MGeometry implements Serializable, Comparable, Cloneable {
 		}
 		return nowTime;
 	}
-	private static double EARTH_RADIUS = 6378.137;  
-    
-    private static double rad(double d) {  
-        return d * Math.PI / 180.0;  
-    }  
+
+	private static double EARTH_RADIUS = 6378.137;
+
+	private static double rad(double d) {
+		return d * Math.PI / 180.0;
+	}
+
 	public static double calDistance(Coordinate p1, Coordinate p2) {
-		/*double x1 = p1.x;
+		/*
+		 * double x1 = p1.x; double y1 = p1.y; double x2 = p2.x; double y2 =
+		 * p2.y; return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 -
+		 * y1));
+		 */
+
+		double x1 = p1.x;
 		double y1 = p1.y;
 		double x2 = p2.x;
 		double y2 = p2.y;
-		return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));*/
-		 
+		double radLat1 = rad(x1);
+		double radLat2 = rad(x2);
+		double a = radLat1 - radLat2;
+		double b = rad(y1) - rad(y2);
+		double s = 2 * Math.asin(Math.sqrt(
+				Math.pow(Math.sin(a / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
+		s = s * EARTH_RADIUS;
+		s = Math.round(s * 10000d) / 10000d;
+		s = s * 1000;
+		return s;
+	}
 
-			double x1 = p1.x;
-			double y1 = p1.y;
-			double x2 = p2.x;
-			double y2 = p2.y;	
-			 double radLat1 = rad(x1);  
-	         double radLat2 = rad(x2);  
-	         double a = radLat1 - radLat2;  
-	         double b = rad(y1) - rad(y2);  
-	         double s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2)  
-	                 + Math.cos(radLat1) * Math.cos(radLat2)  
-	                 * Math.pow(Math.sin(b / 2), 2)));  
-	         s = s * EARTH_RADIUS;  
-	         s = Math.round(s * 10000d) / 10000d;  
-	         s = s*1000;  
-	         return s;  
+	public static LineString MGeometryToGeometry(MGeometry mg, long[] timeArea) {
+		ArrayList<Coordinate> coords = new ArrayList<Coordinate>();
+		if (timeArea[0] > timeArea[1])
+			return null;
+		if (mg instanceof MPoint) {
+			for (int i = 0; i < mg.numOf(); i++) {
+				if (mg.getTimes()[i] >= timeArea[0] || mg.getTimes()[i] <= timeArea[1])
+					coords.add(((MPoint) mg).getCoords()[i]);
+			}
+			Coordinate[] coordinates = new Coordinate[coords.size()];
+			for (int i = 0; i < coords.size(); i++) {
+				coordinates[i] = coords.get(i);
+			}
+			GeometryFactory geometryFactory = new GeometryFactory();
+			return geometryFactory.createLineString(coordinates);
+		}
+		if (mg instanceof MVideo) {
+			for (int i = 0; i < mg.numOf(); i++) {
+				if (mg.getTimes()[i] >= timeArea[0] || mg.getTimes()[i] <= timeArea[1])
+					coords.add(((MVideo) mg).getCoords()[i]);
+			}
+			Coordinate[] coordinates = new Coordinate[coords.size()];
+			for (int i = 0; i < coords.size(); i++) {
+				coordinates[i] = coords.get(i);
+			}
+			GeometryFactory geometryFactory = new GeometryFactory();
+			return geometryFactory.createLineString(coordinates);
+		}
+		if (mg instanceof MPhoto) {
+			for (int i = 0; i < mg.numOf(); i++) {
+				if (mg.getTimes()[i] >= timeArea[0] || mg.getTimes()[i] <= timeArea[1])
+					coords.add(((MPhoto) mg).getCoords()[i]);
+			}
+			Coordinate[] coordinates = new Coordinate[coords.size()];
+			for (int i = 0; i < coords.size(); i++) {
+				coordinates[i] = coords.get(i);
+			}
+			GeometryFactory geometryFactory = new GeometryFactory();
+			return geometryFactory.createLineString(coordinates);
+		}
+		if (mg instanceof MPolygon) {
+			for (int i = 0; i < mg.numOf(); i++) {
+				if (mg.getTimes()[i] >= timeArea[0] || mg.getTimes()[i] <= timeArea[1])
+					coords.add(((MPolygon) mg).getListPolygon()[i].getCoordinate());
+			}
+			Coordinate[] coordinates = new Coordinate[coords.size()];
+			for (int i = 0; i < coords.size(); i++) {
+				coordinates[i] = coords.get(i);
+			}
+			GeometryFactory geometryFactory = new GeometryFactory();
+			return geometryFactory.createLineString(coordinates);
+		}
+		if (mg instanceof MLineString) {
+			for (int i = 0; i < mg.numOf(); i++) {
+				if (mg.getTimes()[i] >= timeArea[0] || mg.getTimes()[i] <= timeArea[1])
+					coords.add(((MLineString) mg).getPoints()[i].getCoordinateN(0));
+			}
+			Coordinate[] coordinates = new Coordinate[coords.size()];
+			for (int i = 0; i < coords.size(); i++) {
+				coordinates[i] = coords.get(i);
+			}
+			GeometryFactory geometryFactory = new GeometryFactory();
+			return geometryFactory.createLineString(coordinates);
+		}
+		return null;
+	}
 
-			//return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-		
+	public static long[] eventTime(Geometry geometry1, Geometry geometry2, MPoint mg1, ArrayList<Long> timeList) {
+		try {
+			if (geometry1.intersects(geometry2) != false) {
+				Geometry interPoint = geometry2.intersection(geometry1);
+				Coordinate[] pp = interPoint.getCoordinates();
+
+				for (int k = 0; k < pp.length; k++) {
+					for (int ii = 1; ii < mg1.numOf(); ii++) {
+
+						if ((calDistance(mg1.getCoords()[ii], pp[k]) + calDistance(mg1.getCoords()[ii - 1], pp[k]))
+								- calDistance(mg1.getCoords()[ii], mg1.getCoords()[ii - 1]) < 0.000000001) {
+							long newTime = (long) ((mg1.getTimes()[ii] - mg1.getTimes()[ii - 1])
+									* calDistance(mg1.getCoords()[ii - 1], pp[k])
+									/ calDistance(mg1.getCoords()[ii], mg1.getCoords()[ii - 1])
+									+ mg1.getTimes()[ii - 1]);
+							if(newTime !=0)
+							timeList.add(newTime);
+							
+						}
+					}
+				}
+				LinkedHashSet<Long> set = new LinkedHashSet<Long>(timeList.size());
+				set.addAll(timeList);
+				timeList.clear();
+				timeList.addAll(set);
+
+				long[] tempList = new long[timeList.size()];
+				for (int i = 0; i < timeList.size(); i++)
+					tempList[i] = timeList.get(i);
+				Arrays.sort(tempList);
+				return tempList;
+
+			} else {
+
+				long[] tempList = new long[timeList.size()];
+				for (int i = 0; i < timeList.size(); i++)
+					tempList[i] = timeList.get(i);
+				Arrays.sort(tempList);
+				return tempList;
+			}
+		} catch (Exception e) {
+
+		}
+		return null;
 	}
 }
-

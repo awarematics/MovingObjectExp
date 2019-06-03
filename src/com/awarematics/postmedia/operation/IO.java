@@ -9,6 +9,7 @@ public class IO {
 		public static String M_Astext(String mgstring)  {
 			String text = "";
 			mgstring = mgstring.replaceAll("\\\\", "");
+			mgstring = mgstring.replaceAll("\'", "");
 			if(mgstring.contains("mvideo"))
 			{
 				mgstring = mgstring.replace("mvideo ", "");
@@ -48,6 +49,23 @@ public class IO {
 						text = text + "("+  pointx.replaceAll("\\\"", "") + " " + pointy.replaceAll("\\\"", "") +") " + LongToString(times[i]);
 					else 
 						text = text + ", ("+ pointx.replaceAll("\\\"", "") + " " + pointy.replaceAll("\\\"", "") +") " + LongToString(times[i]);
+					
+				}
+				text = prefix + text + ")";
+			}
+			else if(mgstring.contains("mbool"))
+			{
+				mgstring = mgstring.replace("mbool ", "");
+				String[] points = mgstring.split("\\};\\{");
+				String[] bool = points[0].replace("{", "").split(",");
+				String[] times = points[1].replace("}", "").split("\\\",\\\"");
+				String prefix ="MBOOL (";
+				for(int i =0;i<bool.length;i++)
+				{
+					if(i ==0)
+						text = text + bool[i] + LongToString(times[i]);
+					else 
+						text = text + ", "+ bool[i] + LongToString(times[i]);
 					
 				}
 				text = prefix + text + ")";

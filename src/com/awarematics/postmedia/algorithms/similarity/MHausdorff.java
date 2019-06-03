@@ -97,7 +97,10 @@ public class MHausdorff implements MSimilarityMeasure {
 			minDistances1.add(min);
 		}
 		MGeometryFactory geometryFactory = new MGeometryFactory();
-		double[] tempList = minDistances1.stream().mapToDouble(i -> i).toArray();
+		double[] tempList = new double[minDistances1.size()];
+		//double[] tempList = minDistances1.stream().mapToDouble(i -> i).toArray();
+		for(int i =0;i< minDistances1.size();i++)
+			tempList[i] = minDistances1.get(i);
 		mdoubleArrayA = geometryFactory.createMDouble(tempList, t_value);
 		for (int i = 0; i <g2.numOf(); i++) {
 			double min = Double.POSITIVE_INFINITY;
